@@ -8,6 +8,7 @@ use App\Models\Action;
 use App\Models\Liste_diffusion;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Jetstream\HasProfilePhoto;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,7 +16,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens,  HasFactory, Notifiable;
+    use HasApiTokens,  HasFactory, Notifiable, HasRoles;
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
@@ -37,6 +38,7 @@ class User extends Authenticatable
         'telephone',
         'direction',
         'fonction',
+        'entite_id',
 
 
     ];
@@ -100,4 +102,10 @@ public function actionsTags()
 {
     return $this->belongsToMany(Action::class, 'action_user');
 }
+
+public function entite()
+{
+    return $this->belongsTo(Entite::class);
+}
+
 }

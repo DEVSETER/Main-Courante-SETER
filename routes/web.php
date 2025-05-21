@@ -1,10 +1,15 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
+use App\Models\User;
+use App\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\EntiteController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ListeDiffusionController;
 
 Route::get('/', function () {
     return view('auth/boxed-signin');
@@ -17,39 +22,55 @@ Route::middleware([
 ])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
-    })->name('dashboard');
+    })->name('index');
+
+
 });
+//Route eneite
+Route::get('/entites', [EntiteController::class, 'create'])->name('entite.creation');
+Route::post('/entites/store', [EntiteController::class, 'store'])->name('entites.store');
+Route::get('/entites/index', [EntiteController::class, 'index'])->name('entites.index');
+Route::put('/entites/{id}', [EntiteController::class, 'update'])->name('entites.update');
+Route::get('/entites/{id}/edit', [EntiteController::class, 'edit'])->name('entites.edit');
+Route::delete('/entites/{id}', [EntiteController::class, 'destroy'])->name('entites.destroy');
+
+// Routes  permissions
+Route::get('/permissions', [PermissionController::class, 'create'])->name('permission.creation');
+Route::post('/permissions/store', [PermissionController::class, 'store'])->name('permissions.store');
+Route::get('/permissions/index', [PermissionController::class, 'index'])->name('permissions.index');
+Route::put('/permissions/{id}', [PermissionController::class, 'update'])->name('permissions.update');
+Route::get('/permissions/{id}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
+
+Route::delete('/permissions/{id}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
 
 
 // Routes  utilisateurs
+Route::get('/users', [UserController::class, 'create'])->name('users.creation');
 Route::post('/users', [UserController::class, 'store'])->name('users.store');
-Route::get('/users', [UserController::class, 'getUsers'])->name('users.getUsers');
-
+Route::get('/users/index', [UserController::class, 'index'])->name('users.index');
 Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
-
 Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
-
 Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
 
 //Gestion des rôles
-use App\Http\Controllers\RoleController;
 
-Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
+Route::get('/roles', [RoleController::class, 'create'])->name('roles.creation');
 Route::get('/roles/{id}/edit', [RoleController::class, 'edit'])->name('roles.edit');
+Route::get('/roles/index', [RoleController::class, 'index'])->name('roles.index');
 
 Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
 Route::put('/roles/{id}', [RoleController::class, 'update'])->name('roles.update');
 Route::delete('/roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
 
-//Permissions
+//Liste de diffusion
+Route::get('/liste_diffusions', [ListeDiffusionController::class, 'index'])->name('liste_diffusions.index');
+Route::get('/liste_diffusions/create', [ListeDiffusionController::class, 'create'])->name('liste_diffusions.create');
+Route::post('/liste_diffusions/store', [ListeDiffusionController::class, 'store'])->name('liste_diffusions.store');
+Route::get('/liste_diffusions/{id}/edit', [ListeDiffusionController::class, 'edit'])->name('liste_diffusions.edit');
+Route::put('/liste_diffusions/{id}', [ListeDiffusionController::class, 'update'])->name('liste_diffusions.update');
+Route::delete('/liste_diffusions/{id}', [ListeDiffusionController::class, 'destroy'])->name('liste_diffusions.destroy');
 
-Route::group(['middleware' => ['permission:create-user']], function () {
-    Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
-    Route::post('/users', [UserController::class, 'store'])->name('users.store');
-});
-
-Route::put('/roles/{id}/permissions', [RoleController::class, 'updatePermissions'])->name('roles.permissions.update');
 
 
 
@@ -158,7 +179,7 @@ Route::view('/pages/maintenence', 'pages.maintenence');
 
 Route::view('/auth/boxed-lockscreen', 'auth.boxed-lockscreen');
 Route::view('/auth/boxed-signin', 'auth.boxed-signin');
-Route::view('/auth/boxed-signup', 'auth.boxed-signup');
+// Route::view('/auth/boxed-signup', 'auth.boxed-signup');
 Route::view('/auth/boxed-password-reset', 'auth.boxed-password-reset');
 Route::view('/auth/cover-login', 'auth.cover-login');
 Route::view('/auth/cover-register', 'auth.cover-register');

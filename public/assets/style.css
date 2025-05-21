@@ -1,0 +1,21 @@
+/* Boutons principaux */
+.btn {
+    background-color: #67152e !important;
+    border-color: #67152e !important;
+    color: #fff !important;
+}
+
+/* Boutons avec bordure uniquement */
+.btn-outline-primary {
+    background-color: transparent !important;
+    border-color: #67152e !important;
+    color: #67152e !important;
+}
+
+/* Boutons au survol */
+.btn:hover,
+.btn-outline-primary:hover {
+    background-color: #67152e !important;
+    border-color: #67152e !important;
+    color: #fff !important;
+}

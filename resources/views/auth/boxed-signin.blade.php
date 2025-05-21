@@ -24,7 +24,7 @@
                             <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Connexion</h1>
                             <p class="text-base font-bold leading-normal text-white-dark">Connectez-vous avec votre e-mail et mot de passe</p>
                         </div>
-                        <form x-data="form" class="space-y-5 dark:text-white" id="formUtilisateur" @submit.prevent="submitForm3()"  method="POST">
+                        <form x-data="form" class="space-y-5 dark:text-white" id="formUtilisateur" @submit.prevent="submitForm3()"   action="{{ route('login-token') }} method="POST">
 
                         {{-- <form  class="space-y-5 dark:text-white "  id="formUtilisateur" @submit.prevent="submitForm3()" action="{{ route('login-token') }}"  method="POST"> --}}
                             @csrf
@@ -53,7 +53,7 @@
                             <div  :class="[isSubmitForm3 ? (form3.select ? 'has-success' : 'has-error') : '']">
                                 <label for="password">Password</label>
                                 <div class="relative text-white-dark">
-                                    <input id="password" name="password"  x-model="form3.password" placeholder="entrez le mot de passe" class="form-input ps-10 placeholder:text-white-dark" />
+                                    <input id="password" type="password" name="password"  x-model="form3.password" placeholder="entrez le mot de passe" class="form-input ps-10 placeholder:text-white-dark" />
                                     @error('Password')
                                     <div class="text-danger">{{ $message }}</div>
                                               @enderror
@@ -75,7 +75,7 @@
 
 
 
-                            <button type="submit" class="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]"> Enregistrer</button>
+                            <button type="submit" class="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]"> Se connecter</button>
                         </form>
 
                         <div class="text-center dark:text-white"> Already have an account ? <a href="/auth/boxed-signin" class="uppercase text-primary underline transition hover:text-black dark:hover:text-white">SIGN IN</a>
@@ -123,7 +123,7 @@
 .then(data => {
     localStorage.setItem('token', data.access_token);
     this.showMessage('Connexion réussie.');
-    window.location.href = '/dashboard'; 
+    window.location.href = '/dashboard';
 })
 .catch(error => {
     this.showMessage(error.message || 'Erreur de connexion.', 'error');

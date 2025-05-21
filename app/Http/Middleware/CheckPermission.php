@@ -19,7 +19,7 @@ class CheckPermission
     public function handle(Request $request, Closure $next): Response
     {
          if (!Auth::check() || !Auth::user()->hasPermission($permission)) {
-            abort(403, 'Vous n\'avez pas la permission d\'accéder à cette ressource.');
+            abort(403, 'Vous n\'avez pas la permission d\'accéder à cette ressource. haha');
         }
         return $next($request);
     }

@@ -15,4 +15,9 @@ class Liste_diffusion extends Model
 
         'nom',
     ];
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'liste_diffusion_user');
+    }
 }

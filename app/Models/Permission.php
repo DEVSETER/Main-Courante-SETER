@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Permission extends Model
 {
-    protected $fillable = ['libelle'];
+    protected $fillable = ['name'];
 
     public function roles()
     {

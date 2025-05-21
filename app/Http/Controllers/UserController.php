@@ -3,18 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-// use Illuminate\Foundation\Auth\User;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+// use Illuminate\Routing\Controllers\HasMiddleware;
+// use Illuminate\Routing\Controllers\Middleware;
+
 
 class UserController extends Controller
 {
+//  public function middleware(): array {
+//     return [
+//         'permission:view user' => ['only' => ['index']],
+//         'permission:edit user' => ['only' => ['edit']],
+//     ];
+//  }
 
     public function store(Request $request)
 {
-    // dd('store');
-    // dd("user");
+
+
     // 1. Valider les données
     $request->validate([
         'nom' => 'required|string|max:255',
@@ -40,37 +49,19 @@ class UserController extends Controller
         'direction' => $request->direction,
         'fonction' => $request->fonction,
     ]);
-
+// Récupérer le rôle de l'utilisateur
 
     // 3. Rediriger ou retourner une réponse
-    return redirect()->route('/dashboard')->with('success', 'Utilisateur ajouté avec succès.');
+    return redirect()->route('users.index')->with('success', 'Utilisateur ajouté avec succès.');
 }
 
 
-// public function login(Request $request)
-// {
-//     // dd('login');
-//     $request->validate([
-//         'email' => 'required|email',
-//         'password' => 'required|string',
-//     ]);
+public function create()
+{
+    $roles = Role::all(); // Récupérer tous les rôles
+    return view('users.user-create', compact('roles')); // Passer les rôles à la vue
+}
 
-//     $user = User::where('email', $request->email)->first();
-
-//     if (!$user || !Hash::check($request->password, $user->password)) {
-//         return response()->json(['message' => 'Identifiants invalides'], 401);
-//     }
-
-//     dd ($user);
-//     return response()->json([
-//         'token' => $user->createToken('web-token')->plainTextToken,
-//     ]);
-// }
-// public function create()
-// {
-//     $roles = \App\Models\Role::all(); // si tu veux afficher les rôles dynamiquement
-//     return view('users.create', compact('roles'));
-// }
 
 public function login(Request $request)
 {
@@ -89,30 +80,58 @@ public function login(Request $request)
     return response()->json(['message' => 'Identifiants invalides.'], 401);
 }
 
-public function getUsers()
+public function index()
 {
     $users = User::with('role')->get(); // Inclure les rôles si nécessaire
-    return view('users.liste-users', compact('users'));
+    return view('users.index', compact('users'));
 }
 public function edit($id)
 {
     $user = User::findOrFail($id); // Récupérer l'utilisateur par son ID
-    return view('users.edit', compact('user')); // Retourner une vue pour l'édition
+    $roles = Role::all(); // Récupérer tous les rôles
+    return view('users.edit', compact('user','roles')); // Retourner une vue pour l'édition
 }
+
+// public function update(Request $request, $id)
+// {
+//     $user = User::findOrFail($id);
+//     $user->update($request->all()); // Mettre à jour les données
+//     return redirect()->route('users.index')->with('success', 'Utilisateur mis à jour avec succès.');
+// }
 
 public function update(Request $request, $id)
 {
-    $user = User::findOrFail($id);
-    $user->update($request->all()); // Mettre à jour les données
-    return redirect()->route('users.getUsers')->with('success', 'Utilisateur mis à jour avec succès.');
-}
+    $request->validate([
+        'nom' => 'required|string|max:255',
+        'prenom' => 'required|string|max:255',
+        'email' => 'required|email|max:255|unique:users,email,' . $id,
+        'telephone' => 'nullable|string|max:20',
+        'fonction' => 'nullable|string|max:255',
+        'direction' => 'nullable|string|max:255',
+        'role_id' => 'nullable|exists:roles,id',
+        'password' => 'nullable|string|min:8', // Le mot de passe est optionnel
+    ]);
 
+    $user = User::findOrFail($id);
+
+    // Mettre à jour les champs sauf le mot de passe
+    $user->update($request->except('password'));
+
+    // Mettre à jour le mot de passe uniquement s'il est fourni
+    if ($request->filled('password')) {
+        $user->update([
+            'password' => bcrypt($request->password),
+        ]);
+    }
+
+    return redirect()->route('users.index')->with('success', 'Utilisateur mis à jour avec succès.');
+}
 public function destroy($id)
 {
     $user = User::findOrFail($id); // Récupérer l'utilisateur par son ID
     $user->delete(); // Supprimer l'utilisateur
 
-    return redirect()->route('users.getUsers')->with('success', 'Utilisateur supprimé avec succès.');
+    return redirect()->route('users.index')->with('success', 'Utilisateur supprimé avec succès.');
 }
 }
 
