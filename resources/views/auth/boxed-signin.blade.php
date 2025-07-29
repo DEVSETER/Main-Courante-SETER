@@ -1,154 +1,345 @@
 <x-layout.auth>
-
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <div x-data="auth">
+    <div x-data="ssoAuth">
         <div class="absolute inset-0">
             <img src="/assets/images/auth/bg-gradient.png" alt="image" class="h-full w-full object-cover" />
         </div>
         <div class="relative flex min-h-screen items-center justify-center bg-[url(/assets/images/auth/map.png)] bg-cover bg-center bg-no-repeat px-6 py-10 dark:bg-[#060818] sm:px-16">
+            <!-- Images de décoration -->
             <img src="/assets/images/auth/coming-soon-object1.png" alt="image" class="absolute left-0 top-1/2 h-full max-h-[893px] -translate-y-1/2" />
             <img src="/assets/images/auth/coming-soon-object2.png" alt="image" class="absolute left-24 top-0 h-40 md:left-[30%]" />
             <img src="/assets/images/auth/coming-soon-object3.png" alt="image" class="absolute right-0 top-0 h-[300px]" />
             <img src="/assets/images/auth/polygon-object.svg" alt="image" class="absolute bottom-0 end-[28%]" />
-            <div
-                class="relative w-full max-w-[870px] rounded-md bg-[linear-gradient(45deg,#fff9f9_0%,rgba(255,255,255,0)_25%,rgba(255,255,255,0)_75%,_#fff9f9_100%)] p-2 dark:bg-[linear-gradient(52.22deg,#0E1726_0%,rgba(14,23,38,0)_18.66%,rgba(14,23,38,0)_51.04%,rgba(14,23,38,0)_80.07%,#0E1726_100%)]">
-                <div class="relative flex flex-col justify-center rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 px-6 lg:min-h-[758px] py-20">
-                    <div class="absolute top-6 end-6">
-                        <div class="dropdown" x-data="dropdown" @click.outside="open = false">
 
+            <div class="relative flex w-full max-w-[1502px] flex-col justify-between overflow-hidden rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 lg:min-h-[758px] lg:flex-row lg:gap-10 xl:gap-0">
+                <!-- Panneau gauche avec dégradé -->
+                <div class="relative hidden w-full items-center justify-center p-5 lg:inline-flex lg:max-w-[835px] xl:-ms-28 ltr:xl:skew-x-[14deg] rtl:xl:skew-x-[-14deg]"
+                     style="background: linear-gradient(225deg, #67152e 90%, #ebba7d 10%);">
+                    <div class="absolute inset-y-0 w-8 from-primary/10 via-transparent to-transparent ltr:-right-10 ltr:bg-gradient-to-r rtl:-left-10 rtl:bg-gradient-to-l xl:w-16 ltr:xl:-right-20 rtl:xl:-left-20"></div>
+                    <div class="ltr:xl:-skew-x-[14deg] rtl:xl:skew-x-[14deg]">
+                        <a href="/" class="w-48 block lg:w-72 ms-10">
+                            <img src="/assets/logoauth.png" alt="Logo" class="w-full" />
+                        </a>
+                        <div class="mt-24 hidden w-full max-w-[430px] lg:block">
+                            <img src="/assets/images/LOGO_TER.png" alt="Cover Image" class="w-full" />
                         </div>
                     </div>
-                    <div class="mx-auto w-full max-w-[440px]">
-                        <div class="mb-10">
-                            <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Connexion</h1>
-                            <p class="text-base font-bold leading-normal text-white-dark">Connectez-vous avec votre e-mail et mot de passe</p>
+                </div>
+
+                <!-- Panneau droit - Formulaire de connexion -->
+                <div class="relative flex w-full flex-col items-center justify-center gap-6 px-4 pb-16 pt-6 sm:px-6 lg:max-w-[667px]">
+                    <!-- Logo mobile -->
+                    <div class="flex max-w-[240px] items-center lg:hidden">
+                        <a href="/" class="block w-16">
+                            <img src="/assets/maincourante.png" alt="Logo" class="w-full" />
+                        </a>
+                    </div>
+
+                    <!-- Contenu principal -->
+                    <div class="w-full max-w-[400px] lg:mt-16">
+                        <!-- Titre -->
+                        <h1 class="text-4xl md:text-5xl font-bold text-center mb-8 bg-gradient-to-r from-[#67152e] to-[#ebba7d] bg-clip-text text-transparent drop-shadow-lg">
+                            Bienvenue !
+                        </h1>
+
+                        <!-- Logo central -->
+                        <div class="mb-10 flex justify-center">
+                            <div class="w-52 h-52">
+                                <img src="/assets/hellologo.png" alt="Logo" class="w-full h-full object-contain" />
+                            </div>
                         </div>
-                        <form x-data="form" class="space-y-5 dark:text-white" id="formUtilisateur" @submit.prevent="submitForm3()"   action="{{ route('login-token') }} method="POST">
 
-                        {{-- <form  class="space-y-5 dark:text-white "  id="formUtilisateur" @submit.prevent="submitForm3()" action="{{ route('login-token') }}"  method="POST"> --}}
-                            @csrf
+                        <!-- Formulaire de connexion -->
+                        <div x-show="!showEmailForm && !showTokenSent" class="space-y-6">
+    <div class="text-center">
+        <p class="text-gray-600 mb-6">Connectez-vous via votre compte d'entreprise</p>
+    </div>
 
+    <!-- ✅ Bouton SSO principal -->
+    <button @click="initiateSSO()"
+            :disabled="loading"
+            class="w-full text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+            style="background-color: #67152e !important;">
+        <span x-show="!loading" class="flex items-center justify-center">
+            🚀 Connexion
+        </span>
+        <span x-show="loading" class="flex items-center justify-center">
+            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Connexion en cours...
+        </span>
+    </button>
 
+    <!-- ✅ NOUVEAU : Option email seulement si Wallix échoue -->
+    <div x-show="showEmailOption" x-transition class="text-center">
+        <p class="text-sm text-gray-500 mb-2">Problème de connexion ?</p>
+        <button @click="showEmailForm = true"
+                class="text-[#67152e] hover:text-[#8b2042] font-medium underline">
+            Recevoir un lien par email
+        </button>
+    </div>
+</div>
 
-                            <div :class="[isSubmitForm3 ? (form3.email ? 'has-success' : 'has-error') : '']">
-                                <label for="email">Email</label>
-                                <div class="relative text-white-dark">
-                                    <input id="email" name="email"  type="email" x-model="form3.email" placeholder="entrez l'email'" class="form-input ps-10 placeholder:text-white-dark" />
-                                    @error('email')
-                                    <div class="text-danger">{{ $message }}</div>
-                                              @enderror
-                                    <span class="absolute start-4 top-1/2 -translate-y-1/2">
-                                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                                            <path opacity="0.5"
-                                                d="M10.65 2.25H7.35C4.23873 2.25 2.6831 2.25 1.71655 3.23851C0.75 4.22703 0.75 5.81802 0.75 9C0.75 12.182 0.75 13.773 1.71655 14.7615C2.6831 15.75 4.23873 15.75 7.35 15.75H10.65C13.7613 15.75 15.3169 15.75 16.2835 14.7615C17.25 13.773 17.25 12.182 17.25 9C17.25 5.81802 17.25 4.22703 16.2835 3.23851C15.3169 2.25 13.7613 2.25 10.65 2.25Z"
-                                                fill="currentColor" />
-                                            <path
-                                                d="M14.3465 6.02574C14.609 5.80698 14.6445 5.41681 14.4257 5.15429C14.207 4.89177 13.8168 4.8563 13.5543 5.07507L11.7732 6.55931C11.0035 7.20072 10.4691 7.6446 10.018 7.93476C9.58125 8.21564 9.28509 8.30993 9.00041 8.30993C8.71572 8.30993 8.41956 8.21564 7.98284 7.93476C7.53168 7.6446 6.9973 7.20072 6.22761 6.55931L4.44652 5.07507C4.184 4.8563 3.79384 4.89177 3.57507 5.15429C3.3563 5.41681 3.39177 5.80698 3.65429 6.02574L5.4664 7.53583C6.19764 8.14522 6.79033 8.63914 7.31343 8.97558C7.85834 9.32604 8.38902 9.54743 9.00041 9.54743C9.6118 9.54743 10.1425 9.32604 10.6874 8.97558C11.2105 8.63914 11.8032 8.14522 12.5344 7.53582L14.3465 6.02574Z"
-                                                fill="currentColor" />
-                                        </svg>
-                                    </span>
-                                </div>
-                            </div>
-                            <div  :class="[isSubmitForm3 ? (form3.select ? 'has-success' : 'has-error') : '']">
-                                <label for="password">Password</label>
-                                <div class="relative text-white-dark">
-                                    <input id="password" type="password" name="password"  x-model="form3.password" placeholder="entrez le mot de passe" class="form-input ps-10 placeholder:text-white-dark" />
-                                    @error('Password')
-                                    <div class="text-danger">{{ $message }}</div>
-                                              @enderror
-                                    <span class="absolute start-4 top-1/2 -translate-y-1/2">
-                                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                                            <path opacity="0.5"
-                                                d="M1.5 12C1.5 9.87868 1.5 8.81802 2.15901 8.15901C2.81802 7.5 3.87868 7.5 6 7.5H12C14.1213 7.5 15.182 7.5 15.841 8.15901C16.5 8.81802 16.5 9.87868 16.5 12C16.5 14.1213 16.5 15.182 15.841 15.841C15.182 16.5 14.1213 16.5 12 16.5H6C3.87868 16.5 2.81802 16.5 2.15901 15.841C1.5 15.182 1.5 14.1213 1.5 12Z"
-                                                fill="currentColor" />
-                                            <path d="M6 12.75C6.41421 12.75 6.75 12.4142 6.75 12C6.75 11.5858 6.41421 11.25 6 11.25C5.58579 11.25 5.25 11.5858 5.25 12C5.25 12.4142 5.58579 12.75 6 12.75Z" fill="currentColor" />
-                                            <path d="M9 12.75C9.41421 12.75 9.75 12.4142 9.75 12C9.75 11.5858 9.41421 11.25 9 11.25C8.58579 11.25 8.25 11.5858 8.25 12C8.25 12.4142 8.58579 12.75 9 12.75Z" fill="currentColor" />
-                                            <path d="M12.75 12C12.75 12.4142 12.4142 12.75 12 12.75C11.5858 12.75 11.25 12.4142 11.25 12C11.25 11.5858 11.5858 11.25 12 11.25C12.4142 11.25 12.75 11.5858 12.75 12Z" fill="currentColor" />
-                                            <path
-                                                d="M5.0625 6C5.0625 3.82538 6.82538 2.0625 9 2.0625C11.1746 2.0625 12.9375 3.82538 12.9375 6V7.50268C13.363 7.50665 13.7351 7.51651 14.0625 7.54096V6C14.0625 3.20406 11.7959 0.9375 9 0.9375C6.20406 0.9375 3.9375 3.20406 3.9375 6V7.54096C4.26488 7.51651 4.63698 7.50665 5.0625 7.50268V6Z"
-                                                fill="currentColor" />
-                                        </svg>
-                                    </span>
-                                </div>
+                        <!-- Formulaire email -->
+                        <div x-show="showEmailForm" x-transition class="space-y-6">
+                            <div class="text-center">
+                                <h2 class="text-xl font-semibold text-gray-700 mb-2">Connexion par email</h2>
+                                <p class="text-gray-600">Saisissez votre adresse email pour recevoir un lien de connexion</p>
                             </div>
 
+                            <form @submit.prevent="sendEmailToken()">
+                                <div class="mb-4">
+                                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Adresse email
+                                    </label>
+                                    <input type="email"
+                                           id="email"
+                                           x-model="email"
+                                           required
+                                           class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#67152e] focus:ring-2 focus:ring-[#67152e]/20"
+                                           placeholder="votre.email@entreprise.com">
+                                </div>
 
+                                <button type="submit"
+                                        :disabled="loading || !email"
+                                        class="w-full bg-[#67152e] hover:bg-[#8b2042] text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <span x-show="!loading">📧 Envoyer le lien</span>
+                                    <span x-show="loading">Envoi en cours...</span>
+                                </button>
+                            </form>
 
-                            <button type="submit" class="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]"> Se connecter</button>
-                        </form>
+                            <div class="text-center">
+                                <button @click="showEmailForm = false"
+                                        class="text-gray-500 hover:text-gray-700 text-sm underline">
+                                    ← Retour aux options de connexion
+                                </button>
+                            </div>
+                        </div>
 
-                        <div class="text-center dark:text-white"> Already have an account ? <a href="/auth/boxed-signin" class="uppercase text-primary underline transition hover:text-black dark:hover:text-white">SIGN IN</a>
+                        <!-- Confirmation d'envoi d'email -->
+                        <div x-show="showTokenSent" x-transition class="space-y-6 text-center">
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                <div class="text-green-600 text-4xl mb-2">✅</div>
+                                <h2 class="text-xl font-semibold text-green-800 mb-2">Email envoyé !</h2>
+                                <p class="text-green-700 mb-4">
+                                    Un lien de connexion a été envoyé à <strong x-text="email"></strong>
+                                </p>
+                                <p class="text-sm text-green-600">
+                                    Le lien expire dans <span x-text="Math.floor(tokenExpiry/60)"></span> minutes
+                                </p>
+                            </div>
+
+                            <button @click="resendToken()"
+                                    :disabled="loading"
+                                    class="text-[#67152e] hover:text-[#8b2042] font-medium underline disabled:opacity-50">
+                                Renvoyer l'email
+                            </button>
+
+                            <div class="text-center">
+                                <button @click="resetForm()"
+                                        class="text-gray-500 hover:text-gray-700 text-sm underline">
+                                    ← Nouvelle tentative de connexion
+                                </button>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Footer -->
+                    <p class="absolute bottom-6 w-full text-center text-sm text-gray-500 dark:text-white">
+                        © <span id="footer-year">2025</span> MAIN COURANTE V1 SETER BY DSI
+                    </p>
                 </div>
             </div>
         </div>
     </div>
-    <script>
 
-    document.addEventListener("alpine:init", () => {
-        Alpine.data("form", () => ({
-            form3: {
-                email: '',
-                password: ''
-            },
-            isSubmitForm3: false,
-            submitForm3() {
-                this.isSubmitForm3 = true;
-                const { email, password } = this.form3;
+   <script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('ssoAuth', () => ({
+        loading: false,
+        showEmailForm: false,
+        showTokenSent: false,
+        showEmailOption: false, // ✅ NOUVEAU : Contrôle l'affichage de l'option email
+        email: '',
+        tokenExpiry: 0,
 
-                if (email && password) {
-                  fetch('/api/auth/login-token', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-    },
-    body: JSON.stringify({ email, password })
-})
-.then(response => {
-    if (!response.ok) {
-        // Vérifiez si la réponse est en JSON ou en HTML
-        const contentType = response.headers.get("content-type");
-        if (contentType && contentType.includes("application/json")) {
-            return response.json().then(err => Promise.reject(err));
-        } else {
-            return Promise.reject({ message: "Une erreur inattendue s'est produite." });
-        }
-    }
-    return response.json();
-})
-.then(data => {
-    localStorage.setItem('token', data.access_token);
-    this.showMessage('Connexion réussie.');
-    window.location.href = '/dashboard';
-})
-.catch(error => {
-    this.showMessage(error.message || 'Erreur de connexion.', 'error');
-});
+        async initiateSSO() {
+            console.log('🚀 Début initiateSSO');
+            this.loading = true;
+            this.showEmailOption = false; // Masquer l'option email pendant la tentative
 
-                } else {
-                    this.showMessage('Merci de remplir tous les champs obligatoires.', 'error');
+            try {
+                const response = await fetch('/auth/initiate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ sso_only: true })
+                });
+
+                console.log('📡 Response status:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-            },
-            showMessage(msg = '', type = 'success') {
-                const toast = window.Swal.mixin({
+
+                const result = await response.json();
+                console.log('📥 Result:', result);
+
+                if (result.success) {
+                    if (result.method === 'wallix_sso') {
+                        this.showMessage('Redirection vers Wallix...', 'info');
+                        // La redirection se fait automatiquement
+                        // ✅ PAS d'affichage de l'option email si succès
+                    } else {
+                        // ✅ Si pas de SSO disponible, proposer directement l'email
+                        this.showEmailOption = true;
+                        this.showMessage('SSO non disponible. Utilisez la connexion par email.', 'warning');
+                    }
+                } else {
+                    // ✅ En cas d'échec, afficher l'option email
+                    this.showEmailOption = true;
+
+                    if (result.error && (result.error.includes('unavailable') || result.error.includes('indisponible'))) {
+                        this.showMessage('Service d\'authentification temporairement indisponible.', 'warning');
+                    } else {
+                        this.showMessage('Erreur de connexion. Vous pouvez utiliser la connexion par email.', 'error');
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Erreur SSO:', error);
+
+                // ✅ En cas d'erreur réseau, afficher l'option email
+                this.showEmailOption = true;
+                this.showMessage('Problème de connexion. Vous pouvez utiliser la connexion par email.', 'error');
+
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        async sendEmailToken() {
+            if (!this.email) {
+                this.showMessage('Veuillez saisir votre email', 'warning');
+                return;
+            }
+
+            console.log('📧 Début sendEmailToken pour:', this.email);
+            this.loading = true;
+
+            try {
+                const response = await fetch('/auth/initiate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        email: this.email,
+                        force_email: true
+                    })
+                });
+
+                console.log('📡 Email response status:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log('📥 Email result:', result);
+
+                if (result.success) {
+                    this.tokenExpiry = result.expires_in || 3600;
+                    this.showEmailForm = false;
+                    this.showTokenSent = true;
+                    this.showMessage('Email envoyé avec succès !', 'success');
+                } else {
+                    this.showMessage(result.error || 'Erreur lors de l\'envoi', 'error');
+                }
+            } catch (error) {
+                console.error('❌ Erreur envoi email:', error);
+                this.showMessage('Erreur lors de l\'envoi de l\'email', 'error');
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        async resendToken() {
+            console.log('🔄 Début resendToken pour:', this.email);
+            this.loading = true;
+
+            try {
+                const response = await fetch('/auth/email/resend', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ email: this.email })
+                });
+
+                console.log('📡 Resend response status:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log('📥 Resend result:', result);
+
+                if (result.success) {
+                    this.tokenExpiry = result.expires_in || 3600;
+                    this.showMessage('Email renvoyé avec succès !', 'success');
+                } else {
+                    this.showMessage(result.error || 'Erreur lors du renvoi', 'error');
+                }
+            } catch (error) {
+                console.error('❌ Erreur resend:', error);
+                this.showMessage('Erreur lors du renvoi', 'error');
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        resetForm() {
+            this.showEmailForm = false;
+            this.showTokenSent = false;
+            this.showEmailOption = false; // ✅ NOUVEAU : Réinitialiser l'option email
+            this.email = '';
+            this.tokenExpiry = 0;
+            this.loading = false;
+        },
+
+        showMessage(message, type = 'info') {
+            console.log(`📢 Message [${type}]:`, message);
+
+            if (window.Swal) {
+                const icons = {
+                    success: 'success',
+                    error: 'error',
+                    warning: 'warning',
+                    info: 'info'
+                };
+
+                Swal.fire({
+                    icon: icons[type] || 'info',
+                    title: message,
                     toast: true,
-                    position: 'top',
+                    position: 'top-end',
                     showConfirmButton: false,
-                    timer: 3000
+                    timer: 4000,
+                    timerProgressBar: true
                 });
-                toast.fire({
-                    icon: type,
-                    title: msg,
-                    padding: '10px 20px'
-                });
-            },
-        }));
-    });
+            } else {
+                alert(`[${type.toUpperCase()}] ${message}`);
+            }
+        }
+    }));
+});
 </script>
-
-
 </x-layout.auth>

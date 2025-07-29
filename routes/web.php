@@ -1,80 +1,233 @@
 <?php
 
 use App\Models\User;
-use App\Models\Permission;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use Spatie\Permission\Models\Permission;
+use App\Http\Controllers\ActionController;
 use App\Http\Controllers\EntiteController;
+use App\Http\Controllers\ImpactController;
+use App\Http\Controllers\ArchiveController;
+use App\Http\Controllers\RapportController;
+use App\Http\Controllers\LocationController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EvenementController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\CommentaireController;
+use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\ListeDiffusionController;
+use App\Http\Controllers\NatureEvenementController;
+
 
 Route::get('/', function () {
-    return view('auth/boxed-signin');
+    return redirect()->route('login');
 });
 
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified',
-])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('index');
+Route::get('/database-unavailable', function () {
+    return view('errors.database-unavailable');
+})->name('database.unavailable');
+
+Route::get('/admin/system/status', function () {
+    try {
+        DB::connection()->getPdo();
+        DB::connection()->select('SELECT 1');
+
+        return response()->json([
+            'database' => 'accessible',
+            'timestamp' => now(),
+            'status' => 'OK'
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'database' => 'inaccessible',
+            'error' => $e->getMessage(),
+            'timestamp' => now(),
+            'status' => 'ERROR'
+        ], 503);
+    }
+})->name('admin.system.status');
 
 
-});
+// Route::group(['prefix' => 'auth'], function () {
+    Route::get('/login', [AuthenticationController::class, 'showLogin'])->name('login');
+Route::post('/auth/initiate', [AuthenticationController::class, 'initiateAuth'])->name('auth.initiate');
+Route::get('/auth/wallix/callback', [AuthenticationController::class, 'wallixCallback'])->name('auth.wallix.callback');
+Route::get('/auth/email/verify/{token}', [AuthenticationController::class, 'verifyEmailToken'])->name('auth.email.verify');
+Route::post('/auth/email/resend', [AuthenticationController::class, 'resendEmailToken'])->name('auth.email.resend');
+// Route::post('/logout', [AuthenticationController::class, 'logout'])->name('logout');
+// });
+// Route::middleware([
+//     'auth:sanctum',
+//     config('jetstream.auth_session'),
+//     'verified',
+// ])->group(function () {
+//     Route::get('/dashboard', function () {
+//         return view('dashboard');
+//     })->name('index');
+
+// });
 //Route eneite
-Route::get('/entites', [EntiteController::class, 'create'])->name('entite.creation');
-Route::post('/entites/store', [EntiteController::class, 'store'])->name('entites.store');
-Route::get('/entites/index', [EntiteController::class, 'index'])->name('entites.index');
-Route::put('/entites/{id}', [EntiteController::class, 'update'])->name('entites.update');
-Route::get('/entites/{id}/edit', [EntiteController::class, 'edit'])->name('entites.edit');
-Route::delete('/entites/{id}', [EntiteController::class, 'destroy'])->name('entites.destroy');
+
+// Route::get('/login', [AuthenticationController::class, 'showLoginForm'])->name('login');
+// Route::post('/login', [AuthenticationController::class, 'redirectToWallix'])->name('login.submit');
+// Route::get('/auth/wallix/callback', [AuthenticationController::class, 'handleWallixCallback'])->name('wallix.callback');
+// Route::post('/logout', [AuthenticationController::class, 'logout'])->name('logout');
+// Route::get('/refresh-token', [AuthenticationController::class, 'refreshToken'])->name('token.refresh');
+
+// // Routes protégées
+// Route::middleware(['auth.wallix'])->group(function () {
+//     Route::get('/dashboard', function () {
+//         return view('dashboard');
+//     })->name('dashboard');
+
+//     // Autres routes protégées...
+// });
+// Route::post('/logout', [UserController::class, 'logout'])->name('logout');
+Route::middleware(['auth'])->group(function () {
+
+
+
+
+Route::get('/entites', [EntiteController::class, 'create'])->middleware('permission:Créer entité')->name('entite.creation');
+Route::post('/entites/store', [EntiteController::class, 'store'])->middleware('permission:Créer entité')->name('entites.store');
+Route::get('/entites/index', [EntiteController::class, 'index'])->middleware('permission:Consulter liste entités')->name('entites.index');
+Route::put('/entites/{id}', [EntiteController::class, 'update'])->middleware('permission:Modifier entité')->name('entites.update');
+Route::get('/entites/{id}/edit', [EntiteController::class, 'edit'])->middleware('permission:Modifier entité')->name('entites.edit');
+Route::delete('/entites/{id}', [EntiteController::class, 'destroy'])->middleware('permission:Supprimer entité')->name('entites.destroy');
 
 // Routes  permissions
-Route::get('/permissions', [PermissionController::class, 'create'])->name('permission.creation');
-Route::post('/permissions/store', [PermissionController::class, 'store'])->name('permissions.store');
-Route::get('/permissions/index', [PermissionController::class, 'index'])->name('permissions.index');
-Route::put('/permissions/{id}', [PermissionController::class, 'update'])->name('permissions.update');
-Route::get('/permissions/{id}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
-
-Route::delete('/permissions/{id}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
+Route::get('/permissions', [PermissionController::class, 'create'])->middleware('permission:Créer privilège')->name('permission.creation');
+Route::post('/permissions/store', [PermissionController::class, 'store'])->middleware('permission:Créer privilège')->name('permissions.store');
+Route::get('/permissions/index', [PermissionController::class, 'index'])->middleware('permission:Consulter liste privilège')->name('permissions.index');
+Route::put('/permissions/{id}', [PermissionController::class, 'update'])->middleware('permission:Modifier privilège')->name('permissions.update');
+Route::get('/permissions/{id}/edit', [PermissionController::class, 'edit'])->middleware('permission:Modifier privilège')->name('permissions.edit');
+Route::delete('/permissions/{id}', [PermissionController::class, 'destroy'])->middleware('permission:Supprimer privilège')->name('permissions.destroy');
 
 
 // Routes  utilisateurs
-Route::get('/users', [UserController::class, 'create'])->name('users.creation');
-Route::post('/users', [UserController::class, 'store'])->name('users.store');
-Route::get('/users/index', [UserController::class, 'index'])->name('users.index');
-Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
-Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
-Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
+    Route::get('/users', [UserController::class, 'create'])->middleware('permission:Consulter liste utilisateurs')->name('users.creation');
+    Route::post('/users', [UserController::class, 'store'])->middleware('permission:Créer utilisateur')->name('users.store');
+    Route::get('/users/index', [UserController::class, 'index'])->middleware('permission:Consulter liste utilisateurs')->name('users.index');
+    Route::get('/users/{id}/edit', [UserController::class, 'edit'])->middleware('permission:Modifier utilisateur')->name('users.edit');
+    Route::put('/users/{id}', [UserController::class, 'update'])->middleware('permission:Modifier utilisateur')->name('users.update');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->middleware('permission:Supprimer utilisateur')->name('users.destroy');
 
 //Gestion des rôles
 
-Route::get('/roles', [RoleController::class, 'create'])->name('roles.creation');
-Route::get('/roles/{id}/edit', [RoleController::class, 'edit'])->name('roles.edit');
-Route::get('/roles/index', [RoleController::class, 'index'])->name('roles.index');
-
-Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
-Route::put('/roles/{id}', [RoleController::class, 'update'])->name('roles.update');
-Route::delete('/roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
+Route::get('/roles', [RoleController::class, 'create'])->middleware('permission:Créer rôle')->name('roles.creation');
+Route::get('/roles/{id}/edit', [RoleController::class, 'edit'])->middleware('permission:Modifier rôle')->name('roles.edit');
+Route::get('/roles/index', [RoleController::class, 'index'])->middleware('permission:Consulter liste rôles')->name('roles.index');
+Route::post('/roles', [RoleController::class, 'store'])->middleware('permission:Créer rôle')->name('roles.store');
+Route::put('/roles/{id}', [RoleController::class, 'update'])->middleware('permission:Modifier rôle')->name('roles.update');
+Route::delete('/roles/{id}', [RoleController::class, 'destroy'])->middleware('permission:Supprimer rôle')->name('roles.destroy');
 
 //Liste de diffusion
-Route::get('/liste_diffusions', [ListeDiffusionController::class, 'index'])->name('liste_diffusions.index');
-Route::get('/liste_diffusions/create', [ListeDiffusionController::class, 'create'])->name('liste_diffusions.create');
-Route::post('/liste_diffusions/store', [ListeDiffusionController::class, 'store'])->name('liste_diffusions.store');
-Route::get('/liste_diffusions/{id}/edit', [ListeDiffusionController::class, 'edit'])->name('liste_diffusions.edit');
-Route::put('/liste_diffusions/{id}', [ListeDiffusionController::class, 'update'])->name('liste_diffusions.update');
-Route::delete('/liste_diffusions/{id}', [ListeDiffusionController::class, 'destroy'])->name('liste_diffusions.destroy');
+Route::get('/liste_diffusions', [ListeDiffusionController::class, 'index'])->middleware('permission:Consulter liste diffusion')->name('liste_diffusions.index');
+Route::get('/liste_diffusions/create', [ListeDiffusionController::class, 'create'])->middleware('permission:Créer liste diffusion')->name('liste_diffusions.create');
+Route::post('/liste_diffusions/store', [ListeDiffusionController::class, 'store'])->middleware('permission:Créer liste diffusion')->name('liste_diffusions.store');
+Route::get('/liste_diffusions/{id}/edit', [ListeDiffusionController::class, 'edit'])->middleware('permission:Modifier liste diffusion')->name('liste_diffusions.edit');
+Route::put('/liste_diffusions/{id}', [ListeDiffusionController::class, 'update'])->middleware('permission:Modifier liste diffusion')->name('liste_diffusions.update');
+Route::delete('/liste_diffusions/{id}', [ListeDiffusionController::class, 'destroy'])->middleware('permission:Supprimer liste diffusion')->name('liste_diffusions.destroy');
 
 
 
+//Route pour evenements
 
-Route::view('/dashboard', 'index');
+
+// Route::get('/evenements', [EvenementController::class, 'index'])->middleware('permission:Consulter liste événements')->name('evenements.index');
+// Route::post('/evenements/store', [EvenementController::class, 'store'])->middleware('permission:Créer événement')->name('evenements.store');
+// Route::get('/evenements/create', [EvenementController::class, 'create'])->middleware('permission:Créer événement')->name('evenements.create');
+// Route::get('/evenements/{id}/edit', [EvenementController::class, 'edit'])->middleware('permission:Modifier événement')->name('evenements.edit');
+// Route::put('/evenements/{id}', [EvenementController::class, 'update'])->middleware('permission:Modifier événement')->name('evenements.update');
+// Route::delete('/evenements/{id}', [EvenementCowlntroller::class, 'destroy'])->middleware('permission:Supprimer événement')->name('evenements.destroy');
+
+
+// Ajouter cette route dans routes/web.php
+Route::post('/evenements/{evenement}/diffuser', [EvenementController::class, 'diffuserEvenement'])->name('evenements.diffuser');
+
+Route::get('/evenements', [EvenementController::class, 'index'])->middleware('permission:Consulter liste événements')->name('evenements.index');
+Route::post('/evenements', [EvenementController::class, 'store'])->middleware('permission:Créer événement')->name('evenements.store');
+Route::get('/evenements/create', [EvenementController::class, 'create'])->middleware('permission:Créer événement')->name('evenements.create');
+Route::get('/evenements/{id}/edit', [EvenementController::class, 'edit'])->middleware('permission:Modifier événement')->name('evenements.edit');
+Route::put('/evenements/{id}', [EvenementController::class, 'update'])->middleware('permission:Modifier événement')->name('evenements.update');
+Route::delete('/evenements/{evenement}', [EvenementController::class, 'destroy'])->middleware('permission:Supprimer événement')->name('evenements.destroy');
+
+Route::get('/evenements/json', [EvenementController::class, 'json'])->name('evenements.json');
+Route::post('/evenements/{id}/update-field', [EvenementController::class, 'updateField'])->middleware('auth');
+//Routes Nature Evenement
+
+
+Route::get('/nature_evenements', [NatureEvenementController::class, 'index'])->middleware('permission:Consulter liste nature événements')->name('nature_evenements.index');
+Route::get('/nature_evenements/create', [NatureEvenementController::class, 'create'])->middleware('permission:Créer nature événements')->name('nature_evenements.create');
+Route::post('/nature_evenements/store', [NatureEvenementController::class, 'store'])->middleware('permission:Créer nature événements')->name('nature_evenements.store');
+Route::get('/nature_evenements/{id}/edit', [NatureEvenementController::class, 'edit'])->middleware('permission:Modifier nature événements')->name('nature_evenements.edit');
+Route::put('/nature_evenements/{id}', [NatureEvenementController::class, 'update'])->middleware('permission:Modifier nature événements')->name('nature_evenements.update');
+Route::delete('/nature_evenements/{id}', [NatureEvenementController::class, 'destroy'])->middleware('permission:Supprimer nature événements')->name('nature_evenements.destroy');
+
+//Routes pour les lieux
+Route::get('/locations', [LocationController::class, 'index'])->middleware('permission:Consulter liste lieux')->name('locations.index');
+Route::get('/locations/create', [LocationController::class, 'create'])->middleware('permission:Créer lieu')->name('locations.create');
+Route::post('/locations/store', [LocationController::class, 'store'])->middleware('permission:Créer lieu')->name('locations.store');
+Route::get('/locations/{id}/edit', [LocationController::class, 'edit'])->middleware('permission:Modifier lieu')->name('locations.edit');
+Route::put('/locations/{id}', [LocationController::class, 'update'])->middleware('permission:Modifier lieu')->name('locations.update');
+Route::delete('/locations/{id}', [LocationController::class, 'destroy'])->middleware('permission:Supprimer lieu')->name('locations.destroy');
+
+
+//Routes pour les impacts
+Route::get('/impacts', [ImpactController::class, 'index'])->middleware('permission:Consulter liste impacts')->name('impacts.index');
+Route::get('/impacts/create', [ImpactController::class, 'create'])->middleware('permission:Créer impact')->name('impacts.create');
+Route::post('/impacts/store', [ImpactController::class, 'store'])->middleware('permission:Créer impact')->name('impacts.store');
+Route::get('/impacts/{id}/edit', [ImpactController::class, 'edit'])->middleware('permission:Modifier impact')->name('impacts.edit');
+Route::put('/impacts/{id}', [ImpactController::class, 'update'])->middleware('permission:Modifier impact')->name('impacts.update');
+Route::delete('/impacts/{id}', [ImpactController::class, 'destroy'])->middleware('permission:Supprimer impact')->name('impacts.destroy');
+
+// routes pour  les rapport
+Route::get('/rapports', [RapportController::class, 'index'])->name('rapports.index');
+Route::get('/rapport/export/{type}/{format}', [RapportController::class, 'export'])->name('rapports.export');
+
+Route::get('/rapports/export/date/{date}/{format}', [RapportController::class, 'exportByDate'])->name('rapports.export.date');
+Route::get('/rapports/export/month/{month}/{format}', [RapportController::class, 'exportByMonth'])->name('rapports.export.month');
+
+
+// Routes pour les actions
+Route::put('/actions/{action}', [ActionController::class, 'update'])->middleware('permission:Modifier action')->name('actions.update');
+Route::delete('/actions/{action}', [ActionController::class, 'destroy'])->middleware('permission:Supprimer action')->name('actions.destroy');
+
+
+// Routes pour les commentaires
+Route::put('/commentaires/{commentaire}', [CommentaireController::class, 'update'])->middleware('permission:Modifier commentaire')->name('commentaires.update');
+Route::delete('/commentaires/{commentaire}', [CommentaireController::class, 'destroy'])->middleware('permission:Supprimer commentaire')->name('commentaires.destroy');
+// Route dashboards
+Route::get('/dashboard', action: [DashboardController::class, 'index'])->middleware('permission:Consulter tableau de bord')->name('dashboard');
+
+//route de l'annuaire
+
+
+//Route des archives
+Route::put('/evenements/{evenement}/unarchive', [ArchiveController::class, 'unarchive'])->middleware('permission:Modifier archive')->name('evenements.unarchive');
+Route::get('/archive', action: [ArchiveController::class, 'index'])->middleware('permission:Consulter liste archive')->name('archive.index');
+//   Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
+
+});
+
+// Route::fallback(function () {
+//     try {
+//         DB::connection()->getPdo();
+//         return abort(404);
+//     } catch (\Exception $e) {
+//         return view('errors.database-unavailable');
+//     }
+// });
+
+// Route::view('/dashboard', 'index');
 Route::view('/analytics', 'analytics');
 Route::view('/finance', 'finance');
 Route::view('/crypto', 'crypto');
@@ -87,65 +240,8 @@ Route::view('/apps/scrumboard', 'apps.scrumboard');
 Route::view('/apps/contacts', 'apps.contacts');
 Route::view('/apps/calendar', 'apps.calendar');
 
-Route::view('/apps/invoice/list', 'apps.invoice.list');
-Route::view('/apps/invoice/preview', 'apps.invoice.preview');
-Route::view('/apps/invoice/add', 'apps.invoice.add');
-Route::view('/apps/invoice/edit', 'apps.invoice.edit');
 
-Route::view('/components/tabs', 'ui-components.tabs');
-Route::view('/components/accordions', 'ui-components.accordions');
-Route::view('/components/modals', 'ui-components.modals');
-Route::view('/components/cards', 'ui-components.cards');
-Route::view('/components/carousel', 'ui-components.carousel');
-Route::view('/components/countdown', 'ui-components.countdown');
-Route::view('/components/counter', 'ui-components.counter');
-Route::view('/components/sweetalert', 'ui-components.sweetalert');
-Route::view('/components/timeline', 'ui-components.timeline');
-Route::view('/components/notifications', 'ui-components.notifications');
-Route::view('/components/media-object', 'ui-components.media-object');
-Route::view('/components/list-group', 'ui-components.list-group');
-Route::view('/components/pricing-table', 'ui-components.pricing-table');
-Route::view('/components/lightbox', 'ui-components.lightbox');
 
-Route::view('/elements/alerts', 'elements.alerts');
-Route::view('/elements/avatar', 'elements.avatar');
-Route::view('/elements/badges', 'elements.badges');
-Route::view('/elements/breadcrumbs', 'elements.breadcrumbs');
-Route::view('/elements/buttons', 'elements.buttons');
-Route::view('/elements/buttons-group', 'elements.buttons-group');
-Route::view('/elements/color-library', 'elements.color-library');
-Route::view('/elements/dropdown', 'elements.dropdown');
-Route::view('/elements/infobox', 'elements.infobox');
-Route::view('/elements/jumbotron', 'elements.jumbotron');
-Route::view('/elements/loader', 'elements.loader');
-Route::view('/elements/pagination', 'elements.pagination');
-Route::view('/elements/popovers', 'elements.popovers');
-Route::view('/elements/progress-bar', 'elements.progress-bar');
-Route::view('/elements/search', 'elements.search');
-Route::view('/elements/tooltips', 'elements.tooltips');
-Route::view('/elements/treeview', 'elements.treeview');
-Route::view('/elements/typography', 'elements.typography');
-
-Route::view('/charts', 'charts');
-Route::view('/widgets', 'widgets');
-Route::view('/font-icons', 'font-icons');
-Route::view('/dragndrop', 'dragndrop');
-
-Route::view('/tables', 'tables');
-
-Route::view('/datatables/advanced', 'datatables.advanced');
-Route::view('/datatables/alt-pagination', 'datatables.alt-pagination');
-Route::view('/datatables/basic', 'datatables.basic');
-Route::view('/datatables/checkbox', 'datatables.checkbox');
-Route::view('/datatables/clone-header', 'datatables.clone-header');
-Route::view('/datatables/column-chooser', 'datatables.column-chooser');
-Route::view('/datatables/export', 'datatables.export');
-Route::view('/datatables/multi-column', 'datatables.multi-column');
-Route::view('/datatables/multiple-tables', 'datatables.multiple-tables');
-Route::view('/datatables/order-sorting', 'datatables.order-sorting');
-Route::view('/datatables/range-search', 'datatables.range-search');
-Route::view('/datatables/skin', 'datatables.skin');
-Route::view('/datatables/sticky-header', 'datatables.sticky-header');
 
 Route::view('/forms/basic', 'forms.basic');
 Route::view('/forms/input-group', 'forms.input-group');
@@ -153,35 +249,13 @@ Route::view('/forms/layouts', 'forms.layouts');
 Route::view('/forms/validation', 'forms.validation');
 Route::view('/forms/input-mask', 'forms.input-mask');
 Route::view('/forms/select2', 'forms.select2');
-Route::view('/forms/touchspin', 'forms.touchspin');
-Route::view('/forms/checkbox-radio', 'forms.checkbox-radio');
-Route::view('/forms/switches', 'forms.switches');
-Route::view('/forms/wizards', 'forms.wizards');
-Route::view('/forms/file-upload', 'forms.file-upload');
-Route::view('/forms/quill-editor', 'forms.quill-editor');
-Route::view('/forms/markdown-editor', 'forms.markdown-editor');
-Route::view('/forms/date-picker', 'forms.date-picker');
-Route::view('/forms/clipboard', 'forms.clipboard');
 
-Route::view('/users/profile', 'users.profile');
-Route::view('/users/user-account-settings', 'users.user-account-settings');
 
-Route::view('/pages/knowledge-base', 'pages.knowledge-base');
-Route::view('/pages/contact-us-boxed', 'pages.contact-us-boxed');
-Route::view('/pages/contact-us-cover', 'pages.contact-us-cover');
-Route::view('/pages/faq', 'pages.faq');
-Route::view('/pages/coming-soon-boxed', 'pages.coming-soon-boxed');
-Route::view('/pages/coming-soon-cover', 'pages.coming-soon-cover');
-Route::view('/pages/error404', 'pages.error404');
-Route::view('/pages/error500', 'pages.error500');
-Route::view('/pages/error503', 'pages.error503');
-Route::view('/pages/maintenence', 'pages.maintenence');
 
-Route::view('/auth/boxed-lockscreen', 'auth.boxed-lockscreen');
-Route::view('/auth/boxed-signin', 'auth.boxed-signin');
-// Route::view('/auth/boxed-signup', 'auth.boxed-signup');
-Route::view('/auth/boxed-password-reset', 'auth.boxed-password-reset');
-Route::view('/auth/cover-login', 'auth.cover-login');
-Route::view('/auth/cover-register', 'auth.cover-register');
-Route::view('/auth/cover-lockscreen', 'auth.cover-lockscreen');
-Route::view('/auth/cover-password-reset', 'auth.cover-password-reset');
+
+
+
+
+
+
+

@@ -13,6 +13,7 @@ Route::get('/user', function (Request $request) {
 // Route::post('auth/login-token', [UserController::class, 'login'])->name('login-token');
 Route::post('auth/login-token', [UserController::class, 'login'])->name('login-token');
 
+Route::get('/employe', [UserController::class, 'getEmploye'])->name('api.employe');
 
 
 Route::post('/login', [UserController::class, 'login']);

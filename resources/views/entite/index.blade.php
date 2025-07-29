@@ -1,6 +1,8 @@
 
 <x-layout.default>
 
+
+
     {{-- <pre>{{ json_encode($entites, JSON_PRETTY_PRINT) }}</pre> --}}
 
     <script src="/assets/js/simple-datatables.js"></script>
@@ -9,6 +11,10 @@
         {{ session('success') }}
     </div>
 @endif
+{{-- <?php
+        dd(auth()->user());
+?> --}}
+
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
  <div x-data="miscellaneous">
@@ -95,7 +101,6 @@
                 { name: 'Id', hidden: false },
                 { name: 'Nom', hidden: false },
                 { name: 'Code', hidden: false },
-
                 { name: 'Crée le', hidden: false },
                 { name: 'Action', hidden: false },
             ],

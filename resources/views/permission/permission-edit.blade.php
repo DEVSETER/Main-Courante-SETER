@@ -52,7 +52,20 @@
                                     </span>
                                 </div>
                             </div>
-
+<div>
+    <label for="type" class="block text-sm font-medium">Type de permission</label>
+    <select id="type" name="type" class="form-select mt-1 block w-full">
+        <option value="">Sélectionner un type</option>
+        @foreach($types as $type)
+            <option value="{{ $type }}" {{ (old('type', $permission->type) == $type) ? 'selected' : '' }}>
+                {{ ucfirst($type) }}
+            </option>
+        @endforeach
+    </select>
+    @error('type')
+        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+    @enderror
+</div>
                             <button type="submit" class="btn btn-primary flex items-center w-full" style="background-color: #67152e; border-color: #67152e; color: #fff;">Mettre à jour</button>
                         </form>
                     </div>

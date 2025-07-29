@@ -32,64 +32,60 @@
         <p class="text-base font-bold leading-normal text-white-dark">Renseignez les informations du rôle et ses permissions, puis enregistrez.</p>
     </div>
 
-    <form class="space-y-5 dark:text-white" id="formUtilisateur" @submit.prevent="submitForm3()" action="{{ route('roles.update', $role->id) }}" method="POST">
-        @csrf
-        @method('PUT')
+   <form action="{{ route('roles.update', $role->id) }}" method="POST" class="space-y-5 dark:text-white">
+    @csrf
+    @method('PUT')
 
-        <!-- Champ Nom -->
-        <div :class="[isSubmitForm3 ? (form3.name ? 'has-success' : 'has-error') : '']">
-            <label for="name">Nom</label>
-            <div class="relative text-white-dark">
-                <input id="name" name="name" type="text" placeholder="Entrez le nom du rôle" value="{{ old('name', $role->name) }}" class="form-input ps-10 placeholder:text-white-dark" />
-                @error('name')
-                    <div class="text-danger">{{ $message }}</div>
-                @enderror
-                <span class="absolute start-4 top-1/2 -translate-y-1/2">
-                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                        <circle cx="9" cy="4.5" r="3" fill="#888EA8" />
-                        <path opacity="0.5" d="M15 13.125C15 14.989 15 16.5 9 16.5C3 16.5 3 14.989 3 13.125C3 11.261 5.68629 9.75 9 9.75C12.3137 9.75 15 11.261 15 13.125Z" fill="#888EA8" />
-                    </svg>
-                </span>
-            </div>
-        </div>
+    <!-- Champ Nom -->
+    <div>
+        <label for="name">Nom</label>
+        <input id="name" name="name" type="text" value="{{ old('name', $role->name) }}" class="form-input ps-10 placeholder:text-white-dark" />
+        @error('name')
+            <div class="text-danger">{{ $message }}</div>
+        @enderror
+    </div>
 
-        <!-- Permissions -->
-        <div>
-            <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">Privilèges</h2>
-            @if($permissions->isNotEmpty())
-                @foreach ($permissions as $permission)
-                    <div class="flex items-center space-x-4 mb-4">
-                        <!-- Switch personnalisé -->
-                        <label class="w-12 h-6 relative">
-                            <input type="checkbox" class="custom_switch absolute w-full h-full opacity-0 z-10 cursor-pointer peer"
-                                   id="permission-{{ $permission->id }}"
-                                   name="permissions[]"
-                                   value="{{ $permission->id }}"
-                                   {{ $role->permissions->contains($permission->id) ? 'checked' : '' }} />
-                            <span class="bg-[#ebedf2] dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:bg-primary before:transition-all before:duration-300">
-                            </span>
-                        </label>
-
-                        <!-- Nom de la permission -->
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            {{ $permission->name }}
-                        </span>
+    <!-- Permissions groupées par type avec dropdown -->
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">Permissions</h2>
+                        @if($permissions->isNotEmpty())
+                            <div class="space-y-3">
+                                @foreach ($permissions as $type => $perms)
+                                    <details class="border rounded bg-white/80 dark:bg-black/30">
+                                        <summary class="cursor-pointer px-4 py-2 font-bold text-[#67152e] uppercase select-none">
+                                            {{ ucfirst($type) }}
+                                        </summary>
+                                        <div class="p-4">
+                                            @foreach ($perms as $permission)
+                                                <div class="flex items-center space-x-4 mb-2">
+                                                    <label class="inline-flex items-center space-x-2">
+                                                        <input type="checkbox"
+                                                            id="permission-{{ $permission->id }}"
+                                                            class="form-checkbox"
+                                                            name="permissions[]"
+                                                            value="{{ $permission->id }}"
+                                                            {{ in_array($permission->id, $role->permissions->pluck('id')->toArray()) ? 'checked' : '' }} />
+                                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ $permission->name }}</span>
+                                                    </label>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </details>
+                                @endforeach
+                            </div>
+                        @else
+                            <p class="text-gray-500">Aucune permission disponible.</p>
+                        @endif
                     </div>
-                @endforeach
-            @else
-                <p class="text-gray-500">Aucune permission disponible.</p>
-            @endif
-        </div>
 
-        <!-- Bouton de soumission -->
-        <div class="mt-10">
-            <button type="submit" class="btn btn-primary flex items-center" style="background-color: #67152e; border-color: #67152e; color: #fff;">
-                Enregistrer
-            </button>
-        </div>
-    </form>
-</div>
+                    <div class="mt-10">
+                        <button type="submit" class="btn btn-primary flex items-center w-full" style="background-color: #67152e; border-color: #67152e; color: #fff;">
+                            Mettre à jour
+                        </button>
+                    </div>
+                </form>
                 </div>
+                                </div>
             </div>
         </div>
     </div>

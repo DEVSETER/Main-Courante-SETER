@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('prenom');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
             $table->string('role_id')->foreignId('role_id')->constrained('roles')->onDelete('cascade');
             $table->string('telephone')->nullable();
             $table->string('direction')->nullable();
@@ -50,7 +49,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
     }
 };

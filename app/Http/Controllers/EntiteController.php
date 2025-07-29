@@ -3,12 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Models\Entite;
+use App\Models\Evenement;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Routing\Controllers\Middleware;
 
 
-class EntiteController extends Controller
+class EntiteController extends Controller implements HasMiddleware
 {
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:Consulter liste entités', only: ['index']),
+            new Middleware('permission:Créer entité', only: ['create', 'store']),
+            new Middleware('permission:Modifier entité', only: ['edit', 'update']),
+            new Middleware('permission:Supprimer entité', only: ['destroy']),
+            new Middleware('permission:Afficher détails entité', only: ['show']),
+            new Middleware('permission:Rechercher entités', only: ['search']),
+        ];
+    }
+
 public function index()
 {
 
@@ -28,12 +44,12 @@ public function create()
     {
 
 $validator =Validator::make($request->all(), [
-    'nom' => 'required|string|unique:entites,nom|min:3',
+    'nom' => 'required|string|unique:entites,nom|min:1',
 ]);
     if ($validator->passes()) {
     entite::create([
         'nom' => $request->nom,
-        'code' => $request->nom,
+        'code' => $request->code,
     ]);
         return redirect()->route('entites.index')->with('success', 'Privilège créé avec succès.');
 
@@ -45,6 +61,12 @@ $validator =Validator::make($request->all(), [
 
 }
 
+public function json()
+{
+    return response()->json(
+        Evenement::with(['nature_evenement', 'location', 'impacts', 'entite', 'actions', 'commentaires'])->get()
+    );
+}
 
 public function edit($id)
 {
@@ -80,20 +102,17 @@ public function update(Request $request, $id)
     // Récupérer l'entité ou renvoyer une erreur 404 si elle n'existe pas
     $entite = Entite::findOrFail($id);
 
-    // Valider les données de la requête
     $request->validate([
-        'nom' => 'required|string|min:3|unique:entites,nom,' . $entite->id,
-        'code' => 'required|string|min:3|unique:entites,code,' . $entite->code,
+        'nom' => 'required|string|min:1|unique:entites,nom,' . $entite->id,
+        'code' => 'required|string|min:1|unique:entites,code,' . $entite->id,
     ]);
 
-    // Mettre à jour l'entité
     $entite->update([
         'nom' => $request->nom,
         'code' => $request->code,
     ]);
 
-    // Rediriger avec un message de succès
-    return redirect()->route('entites.index')->with('success', 'Privilège mis à jour avec succès.');
+    return redirect()->route('entites.index')->with('success', 'Entité mis à jour avec succès.');
 }
 public function destroy(Request $request)
 {

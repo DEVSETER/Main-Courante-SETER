@@ -1,0 +1,1334 @@
+/* Boutons principaux */
+.btn {
+    background-color: #67152e !important;
+    border-color: #67152e !important;
+    color: #fff !important;
+}
+
+/* Boutons avec bordure uniquement */
+.btn-outline-primary {
+    background-color: transparent !important;
+    border-color: #67152e !important;
+    color: #67152e !important;
+}
+
+/* Boutons au survol */
+.btn:hover,
+.btn-outline-primary:hover {
+    background-color: #67152e !important;
+    border-color: #67152e !important;
+    color: #fff !important;
+}
+
+.responsive-table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.responsive-table {
+    min-width: 100%;
+    border-collapse: collapse;
+}
+
+.responsive-table th {
+    background-color: #f3f4f6;
+    padding: 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.responsive-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* Styles pour les boutons */
+.btn-primary {
+    background-color: #67152e;
+    border-color: #67152e;
+    color: #fff;
+}
+
+.btn-danger {
+    background-color: #dc2626;
+    border-color: #dc2626;
+    color: #fff;
+}
+
+/* Styles pour la recherche */
+.search-container {
+    margin-bottom: 1rem;
+}
+
+/* Autres styles spécifiques */
+.user-card {
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Styles pour les listes */
+.user-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+}
+
+        /* Styles personnalisés pour SimpleDatatables */
+        /* Dans votre section <style>, ajouter : */
+
+/* Empêcher les doublons visuels */
+.page-numbers button {
+    min-width: 36px;
+    height: 36px;
+    margin: 0 1px;
+}
+
+.page-numbers button:disabled {
+    opacity: 1;
+    cursor: default;
+}
+
+/* Style spécial pour la page courante */
+.btn-primary:disabled {
+    background-color: #007bff !important;
+    border-color: #007bff !important;
+    color: white !important;
+}
+
+/* Éviter les répétitions de boutons */
+.pagination-controls button {
+    flex-shrink: 0;
+}
+
+.quick-nav input {
+    border: 1px solid #007bff;
+}
+
+.quick-nav input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+        .dataTable-wrapper {
+            margin-top: 20px;
+        }
+        .dataTable-top, .dataTable-bottom {
+            padding: 10px 0;
+        }
+        .dataTable-search {
+            margin-bottom: 15px;
+        }
+        .dataTable-pagination {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+        .dataTable-pagination a, .dataTable-pagination span {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            text-decoration: none;
+            color: #333;
+        }
+        .dataTable-pagination .active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #D3D3D3 0%, #D3D3D3 100%);
+            min-height: 100vh;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .container {
+            max-width: 95%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .nav-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        /* .nav-btn {
+            background: linear-gradient(45deg, #ebba7d, #ebba7d);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        } */
+
+        /* .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(45deg, #67152e, #67152e);
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        } */
+         /* AJOUTER CES STYLES dans la section <style> existante */
+
+/* Styles pour le loader */
+/* REMPLACER tous les styles de pagination par ceux-ci : */
+
+/* Styles pour la pagination - VERSION CORRIGÉE */
+.pagination-container {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e5e5e5;
+}
+
+.pagination-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.pagination-controls button {
+    min-width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    color: #333;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,123,255,0.3);
+}
+
+.pagination-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f8f9fa;
+    color: #6c757d;
+}
+
+/* Style spécial pour l'indicateur de page courante */
+.current-page-indicator {
+    padding: 8px 16px !important;
+    background: #007bff !important;
+    color: white !important;
+    border: 2px solid #007bff !important;
+    border-radius: 6px !important;
+    font-weight: bold !important;
+    min-width: 50px !important;
+}
+
+/* Styles pour les petits boutons de pages */
+.page-numbers-small {
+    display: flex;
+    justify-content: center;
+    gap: 3px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.page-numbers-small button {
+    min-width: 32px !important;
+    height: 32px !important;
+    padding: 4px 8px !important;
+    font-size: 12px !important;
+    border-radius: 4px !important;
+}
+
+.page-numbers-small button.btn-primary {
+    background: #007bff !important;
+    border-color: #007bff !important;
+    color: white !important;
+}
+
+.page-numbers-small button.btn-outline-secondary {
+    background: white !important;
+    border-color: #ddd !important;
+    color: #666 !important;
+}
+
+.page-numbers-small button.btn-outline-secondary:hover {
+    background: #e9ecef !important;
+    border-color: #007bff !important;
+    color: #007bff !important;
+}
+
+/* Navigation rapide */
+.quick-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.quick-nav input {
+    width: 60px;
+    padding: 6px 8px;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.quick-nav input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    border-color: #0056b3;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .pagination-info {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .pagination-controls {
+        gap: 5px;
+    }
+
+    .pagination-controls button {
+        min-width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+
+    .page-numbers-small {
+        gap: 2px;
+    }
+
+    .page-numbers-small button {
+        min-width: 28px !important;
+        height: 28px !important;
+        font-size: 11px !important;
+    }
+}
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loader {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Styles pour les notifications */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    max-width: 400px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 9998;
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+/* CORRIGER - Remplacer les classes existantes par : */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    max-width: 400px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 9998;
+}
+
+/* Types de notifications - NOMS CORRECTS */
+.notification.success {
+    background: #d4edda;
+    border-left: 4px solid #28a745;
+    color: #155724;
+}
+
+.notification.error {
+    background: #f8d7da;
+    border-left: 4px solid #dc3545;
+    color: #721c24;
+}
+
+.notification.warning {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    color: #856404;
+}
+
+.notification.info {
+    background: #d1ecf1;
+    border-left: 4px solid #17a2b8;
+    color: #0c5460;
+}
+.nav-btn {
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        background-color: #ebba7d;
+        color: #67152e;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .nav-btn:hover {
+        background-color: #d4a76f;
+    }
+
+    .nav-btn.active {
+        background-color: #67152e;
+        color: #fff;
+        box-shadow: 0 0 0 3px #ebba7d;
+    }
+
+    .nav-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+               background-color: #dbeafe;  /* bleu très clair */
+    color: #1e40af;             /* bleu doux */
+    border: none;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+        }
+        .btn-primary:hover {
+    background-color: #93c5fd;  /* bleu un peu plus vif au hover */
+}
+        .btn-secondary {
+                border-color: rgb(226 160 63 / var(--tw-border-opacity));
+                    background-color: rgb(226 160 63 / var(--tw-bg-opacity));
+            color: white;
+        }
+
+        .btn-danger {
+             background-color: #fde8e8;  /* rouge très clair */
+            color: #b91c1c;             /* rouge doux */
+            border: none;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+                }
+        .btn-danger:hover {
+    background-color: #fca5a5;  /* rouge un peu plus vif au hover */
+}
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+       /* Tableau avec largeur minimale et retour à la ligne autorisé */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    table-layout: auto; /* Largeurs automatiques au lieu de fixed */
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ecf0f1;
+    /* min-width: 200px; Largeur minimale de 200px */
+    max-width: 400px; /* Largeur maximale pour éviter des colonnes trop larges */
+    word-wrap: break-word; /* Permet de couper les mots longs */
+    white-space: normal; /* Permet le retour à la ligne */
+    vertical-align: top; /* Aligne le contenu en haut des cellules */
+}
+
+/* Exceptions pour certaines colonnes spécifiques */
+th:nth-child(1), td:nth-child(1) { /* Numéro/ID */
+    min-width: 80px;
+    max-width: 120px;
+}
+
+th:nth-child(2), td:nth-child(2) { /* Date et heure */
+    min-width: 140px;
+    max-width: 180px;
+}
+
+/* Colonne Description - peut être plus large */
+th:nth-child(5), td:nth-child(5) { /* Description */
+    min-width: 200px;
+    max-width: 500px; /* Plus large pour la description */
+    white-space: normal; /* Permet explicitement le retour à la ligne */
+    word-break: break-word; /* Coupe les mots longs si nécessaire */
+}
+.responsive-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+@media (max-width: 768px) {
+    .responsive-table,
+    .responsive-table thead,
+    .responsive-table tbody,
+    .responsive-table th,
+    .responsive-table td,
+    .responsive-table tr {
+        display: block;
+    }
+    .responsive-table thead tr {
+        display: none;
+    }
+    .responsive-table td {
+        position: relative;
+        padding-left: 50%;
+        border: none;
+        border-bottom: 1px solid #eee;
+    }
+    .responsive-table td:before {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        width: 45%;
+        white-space: nowrap;
+        font-weight: bold;
+        color: #666;
+        content: attr(data-label);
+    }
+}
+/* Pour les badges, garder une taille raisonnable */
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-block;
+    white-space: nowrap; /* Les badges restent sur une ligne */
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.badge-outline {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: 600;
+    background: transparent;
+    white-space: nowrap; /* Les badges restent sur une ligne */
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Pour les boutons d'action - plus compact */
+th:last-child, td:last-child { /* Colonne Opérations */
+    min-width: 120px;
+    max-width: 150px;
+    text-align: center;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 3px;
+    white-space: nowrap;
+    justify-content: center;
+}
+
+.btn-small {
+    padding: 4px 6px;
+    font-size: 11px;
+    border-radius: 4px;
+    min-width: 28px;
+}
+
+/* Ajuster la largeur du conteneur de table */
+/* .table-container {
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+} */
+
+/* Style pour les en-têtes */
+/* th {
+    border-top: 1px solid #e5e7eb !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    border-left: none !important;
+    border-right: none !important;
+    background: #e5e7eb;
+    padding: 8px 12px;
+    font-weight: 600;
+} */
+
+/* Améliorer l'affichage au survol */
+tr:hover {
+    background: #f8f9fa;
+}
+
+/* Pour les cellules éditables */
+.editable-row {
+    background: #fff3cd !important;
+    border: 2px solid #ffc107;
+}
+
+.editable-cell {
+    background: white;
+    border: 1px solid #007bff;
+    padding: 8px;
+    border-radius: 4px;
+    width: 100%;
+    min-height: 34px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    table-layout: auto; /* Largeurs automatiques au lieu de fixed */
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ecf0f1;
+    min-width: 250px; /* Largeur minimale de 200px */
+    max-width: 400px; /* Largeur maximale pour éviter des colonnes trop larges */
+    word-wrap: break-word; /* Permet de couper les mots longs */
+    white-space: normal; /* Permet le retour à la ligne */
+    vertical-align: top; /* Aligne le contenu en haut des cellules */
+}
+
+/* Exceptions pour certaines colonnes spécifiques */
+th:nth-child(1), td:nth-child(1) { /* Numéro/ID */
+    min-width: 180px;
+    max-width: 120px;
+}
+
+th:nth-child(2), td:nth-child(2) { /* Date et heure */
+    min-width: 240px;
+    max-width: 250px;
+}
+
+/* Colonne Description - peut être plus large */
+th:nth-child(5), td:nth-child(5) { /* Description */
+    min-width: 200px;
+    max-width: 500px; /* Plus large pour la description */
+    white-space: normal; /* Permet explicitement le retour à la ligne */
+    word-break: break-word; /* Coupe les mots longs si nécessaire */
+}
+
+/* Pour les badges, garder une taille raisonnable */
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-block;
+    white-space: nowrap; /* Les badges restent sur une ligne */
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.badge-outline {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: 600;
+    background: transparent;
+    white-space: nowrap; /* Les badges restent sur une ligne */
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Pour les boutons d'action - plus compact */
+th:last-child, td:last-child { /* Colonne Opérations */
+    min-width: 120px;
+    max-width: 150px;
+    text-align: center;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 3px;
+    white-space: nowrap;
+    justify-content: center;
+}
+
+.btn-small {
+    padding: 4px 6px;
+    font-size: 11px;
+    border-radius: 4px;
+    min-width: 28px;
+}
+
+/* Ajuster la largeur du conteneur de table */
+.table-container {
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+}
+
+/* Style pour les en-têtes */
+th {
+    border-top: 1px solid #e5e7eb !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    border-left: none !important;
+    border-right: none !important;
+    background: #e5e7eb;
+    padding: 8px 12px;
+    font-weight: 600;
+}
+
+/* Améliorer l'affichage au survol */
+tr:hover {
+    background: #f8f9fa;
+}
+
+/* Pour les cellules éditables */
+.editable-row {
+    background: #fff3cd !important;
+    border: 2px solid #ffc107;
+}
+
+.editable-cell {
+    background: white;
+    border: 1px solid #007bff;
+    padding: 8px;
+    border-radius: 4px;
+    width: 100%;
+    min-height: 34px;
+}
+
+/* Responsive pour petits écrans */
+@media (max-width: 1024px) {
+    table {
+        min-width: 1000px; /* Force le scroll horizontal sur petits écrans */
+    }
+
+    th, td {
+        min-width: 150px; /* Réduire légèrement sur petits écrans */
+        padding: 8px;
+    }
+}
+
+        .editable-row {
+            background: #fff3cd !important;
+            border: 2px solid #ffc107;
+        }
+
+        .editable-cell {
+            background: white;
+            border: 1px solid #007bff;
+            padding: 8px;
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        .flex {
+    display: flex;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem;
+}
+
+.text-xs {
+    font-size: 0.75rem;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+}
+
+.p-1 {
+    padding: 0.25rem;
+}
+
+.p-3 {
+    padding: 0.75rem;
+}
+
+.rounded {
+    border-radius: 0.25rem;
+}
+
+.border {
+    border-width: 1px;
+}
+
+.bg-white {
+    background-color: white;
+}
+
+.text-gray-500 {
+    color: #6b7280;
+}
+
+.text-gray-700 {
+    color: #374151;
+}
+
+.bg-blue-100 {
+    background-color: #dbeafe;
+}
+
+.text-blue-800 {
+    color: #1e40af;
+}
+
+/* Autres couleurs nécessaires */
+.bg-yellow-100 { background-color: #fef3c7; }
+.text-yellow-800 { color: #92400e; }
+.bg-green-100 { background-color: #dcfce7; }
+.text-green-800 { color: #166534; }
+.bg-gray-100 { background-color: #f3f4f6; }
+.text-gray-800 { color: #1f2937; }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-en-cours {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-termine {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-urgent {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+      
+.status-urgent {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Badges pour POST et Rédacteur */
+.badge-outline {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+    background: transparent;
+}
+
+.post-badge {
+    border: 1px solid #67152e;
+    color: #67152e;
+}
+
+.redacteur-badge {
+    border: 1px solid #3498db;
+    color: #3498db;
+}
+
+/* Styles pour les actions existantes */
+.form-separator {
+    margin: 20px 0 10px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #67152e;
+}
+
+.form-separator h4 {
+    color: #67152e;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.existing-items {
+    max-height: 200px;
+    overflow-y: auto;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.item {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.action-item {
+    border-left: 3px solid #67152e;
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.item-type {
+    font-weight: bold;
+    color: #67152e;
+}
+
+.item-text {
+    margin-bottom: 5px;
+}
+
+.item-author {
+    font-size: 12px;
+    font-style: italic;
+    text-align: right;
+    color: #666;
+}
+
+/* Symbole de séparation entre les items */
+.item:not(:last-child)::after {
+    content: "• • •";
+    display: block;
+    text-align: center;
+    color: #ccc;
+    margin: 10px 0;
+}
+.form-group[x-show="field.key === 'new_comment'"] {
+    border: 1px solid #3498db;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    background-color: #f0f8ff;
+}
+
+.form-group[x-show="field.key === 'new_comment'"] .form-label {
+    color: #3498db;
+    font-weight: bold;
+}
+.form-group[x-show="field.key === 'new_comment'"] {
+    display: block !important;
+    border: 2px solid red;
+}
+/* Pour rendre visible la zone d'actions */
+.actions-list-container {
+    padding: 10px !important;
+    margin: 10px 0;
+    background:
+}
+.status-badge {
+    width: 100px !important;
+
+}
+
+/* Pour voir la section même si elle est vide */
+.existing-items:empty::before {
+    content: "Aucune action trouvée";
+    display: block;
+    color: red;
+    font-style: italic;
+    padding: 10px;
+}
+/* Empêcher le retour à la ligne dans les cellules du tableau */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    table-layout: fixed;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ecf0f1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+}
+
+th:nth-child(1), td:nth-child(1) {
+    width: 80px;
+    max-width: 80px;
+}
+
+th:nth-child(2), td:nth-child(2) {
+    width: 120px;
+    max-width: 120px;
+}
+
+th:nth-child(3), td:nth-child(3) { /* Nature */
+    width: 150px;
+    max-width: 150px;
+}
+
+th:nth-child(4), td:nth-child(4) { /* Localisation */
+    width: 120px;
+    max-width: 120px;
+}
+
+th:nth-child(5), td:nth-child(5) { /* Description */
+    width: 200px;
+    max-width: 200px;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-block;
+    white-space: nowrap;
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.badge-outline {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: 600;
+    background: transparent;
+    white-space: nowrap;
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Pour les boutons d'action */
+.action-buttons {
+    display: flex;
+    gap: 3px;
+    white-space: nowrap;
+}
+
+.btn-small {
+    padding: 4px 8px;
+    font-size: 11px;
+    border-radius: 4px;
+    min-width: 30px;
+}
+
+/* Ajuster la largeur du conteneur de table pour permettre le scroll horizontal si nécessaire */
+.table-container {
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+}
+
+/* Pour les colonnes spécifiques, vous pouvez ajuster selon vos besoins */
+.status-badge {
+    width: 80px !important;
+    max-width: 80px !important;
+}
+.soft-yellow-btn {
+    background-color: #fef9c3;
+    color: #92400e;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.soft-yellow-btn:hover {
+    background-color: #fde68a;
+}
+/* Tooltip pour voir le contenu complet au survol */
+td[title] {
+    cursor: help;
+}
+/* Styles pour l'édition d'actions */
+.action-editing {
+    border-color: #3b82f6 !important;
+    background-color: #eff6ff;
+}
+
+.action-buttons {
+    transition: all 0.2s ease;
+}
+
+.action-buttons button {
+    transition: all 0.2s ease;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+.action-buttons button:hover {
+    transform: scale(1.1);
+}
+
+/* Animation pour la suppression */
+.action-removing {
+    animation: slideOut 0.3s ease-out forwards;
+}
+
+@keyframes slideOut {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+}
+
+/* Styles pour les champs d'édition d'action */
+.action-editing .form-control {
+    font-size: 12px;
+    padding: 6px 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+}
+
+.action-editing .form-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 3px;
+}
+
+.action-editing .form-group {
+    margin-bottom: 8px;
+}
+

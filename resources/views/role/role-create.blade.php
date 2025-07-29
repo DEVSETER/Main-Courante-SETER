@@ -53,7 +53,7 @@
     </div>
 
     <!-- Permissions -->
-    <div>
+    {{-- <div>
         <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">Permissions</h2>
         @if($permissions->isNotEmpty())
             @foreach ($permissions as $permission)
@@ -68,8 +68,36 @@
         @else
             <p class="text-gray-500">Aucune permission disponible.</p>
         @endif
-    </div>
+    </div> --}}
 
+    <div>
+    <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">Permissions</h2>
+    @if($permissions->isNotEmpty())
+        <div class="space-y-3">
+            @foreach ($permissions as $type => $perms)
+                <details class="border rounded bg-white/80 dark:bg-black/30">
+                    <summary class="cursor-pointer px-4 py-2 font-bold text-[#67152e] uppercase select-none">
+                        {{ ucfirst($type) }}
+                    </summary>
+                    <div class="p-4">
+                        @foreach ($perms as $permission)
+                            <div class="flex items-center space-x-4 mb-2">
+                                <label class="inline-flex items-center space-x-2">
+                                    <input type="checkbox" id="permission-{{ $permission->id }}" class="form-checkbox " name="permissions[]" value="{{ $permission->id }}" />
+                                    <span class=" dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:bg-primary before:transition-all before:duration-300">{{ $permission->name }}</span>
+                                    {{-- <span class="bg-[#ebedf2] dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:blg-primary before:transition-all before:duration-300"> --}}
+                            </span>
+                                </label>
+                            </div>
+                        @endforeach
+                    </div>
+                </details>
+            @endforeach
+        </div>
+    @else
+        <p class="text-gray-500">Aucune permission disponible.</p>
+    @endif
+</div>
     <!-- Bouton de soumission -->
     <div class="mt-10">
         <button type="submit" class="btn btn-primary flex items-center w-full" style="background-color: #67152e; border-color: #67152e; color: #fff;">

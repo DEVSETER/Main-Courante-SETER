@@ -3,127 +3,188 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Role;
+use App\Models\Entite;
+
+use App\Mail\DemandeMail;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-// use Illuminate\Routing\Controllers\HasMiddleware;
-// use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Mail;
+use Spatie\Permission\Models\Permission;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
 
-class UserController extends Controller
-{
-//  public function middleware(): array {
-//     return [
-//         'permission:view user' => ['only' => ['index']],
-//         'permission:edit user' => ['only' => ['edit']],
-//     ];
-//  }
-
-    public function store(Request $request)
+class UserController extends Controller  implements HasMiddleware
 {
 
+  public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:Consulter liste utilisateurs', only: ['index']),
+            new Middleware('permission:Modifier utilisateur', only: ['edit']),
+            new Middleware('permission:Créer utilisateur', only: ['create']),
+            new Middleware('permission:Supprimer utilisateur', only: ['destroy']),
+        ];
+    }
+    public function index()
 
-    // 1. Valider les données
-    $request->validate([
+    {
+        //   dd([
+        //     'user_id' => auth()->id(),
+        //     'roles' => auth()->user()->getRoleNames(),
+        //     'permissions' => auth()->user()->getAllPermissions()->pluck('name'),
+        //     'can_permission' => auth()->user()->can('Consulter liste privilège'),
+        // ]);
+        $roles = Role::all();
+        $entites = Entite::all();
+        $users = User::with('roles', 'entite')->get();
+        return view('users.index', compact('users', 'roles', 'entites'));
+        // $users = User::with('role')->get(); // Inclure les rôles si nécessaire
+        // return view('users.index', compact('users'));
+    }
+
+public function store(Request $request)
+{
+    $validated = $request->validate([
         'nom' => 'required|string|max:255',
         'prenom' => 'required|string|max:255',
         'email' => 'required|email|unique:users,email',
-        'password' => 'required|string|min:6',
+        'matricule' => 'required|string|max:255|unique:users,matricule',
         'telephone' => 'nullable|string',
+        'direction' => 'required|string',
+        'entite_id' => 'nullable|integer',
+        'fonction' => 'required|string',
         'role_id' => 'required|exists:roles,id',
-        'direction' => 'nullable|string',
-        'fonction' => 'nullable|string',
     ]);
-
-    // 2. Créer l’utilisateur
+    $employe = $this->getEmployeByMatricule($validated['matricule']);
+if (!$employe) {
+        return back()->withErrors(['matricule' => 'Matricule introuvable dans l\'annuaire.']);
+    }
     // dd($request);
-
     $user = User::create([
-        'nom' => $request->nom,
-        'prenom' => $request->prenom,
-        'email' => $request->email,
-        'password' => Hash::make($request->password),
-        'telephone' => $request->telephone,
-        'role_id' => $request->role_id,
-        'direction' => $request->direction,
-        'fonction' => $request->fonction,
+        'nom' => $employe['nom'] ?? '',
+        'prenom' => $employe['prenom'] ?? '',
+        'email' => $employe['email'] ?? '',
+        'matricule' => $employe['matricule'],
+        'telephone' => $employe['telephone'] ?? null,
+        'fonction' => $employe['fonction'] ?? null,
+        'direction' => $employe['direction'] ?? null,
+        'entite_id' => $validated['entite_id'],
     ]);
-// Récupérer le rôle de l'utilisateur
+    $role = Role::find($validated['role_id']);
+    if ($role) {
+        $user->assignRole($role->name);
+    }
+    $entite= Entite::find($validated['entite_id']);
+    if ($entite) {
+        $user->entite()->associate($entite);
 
-    // 3. Rediriger ou retourner une réponse
-    return redirect()->route('users.index')->with('success', 'Utilisateur ajouté avec succès.');
-}
-
-
-public function create()
-{
-    $roles = Role::all(); // Récupérer tous les rôles
-    return view('users.user-create', compact('roles')); // Passer les rôles à la vue
-}
-
-
-public function login(Request $request)
-{
-    $credentials = $request->only('email', 'password');
-
-    if (Auth::attempt($credentials)) {
-        $user = Auth::user();
-        $token = $user->createToken('authToken')->plainTextToken;
-
-        return response()->json([
-            'access_token' => $token,
-            'user' => $user,
-        ]);
     }
 
-    return response()->json(['message' => 'Identifiants invalides.'], 401);
+
+    return redirect()->route('users.index')->with('success', 'Utilisateur ajouté avec succès.');
+}
+public function create()
+
+{
+    // $matricule = $request->query('matricule');
+    // $jsonPath = base_path('database/db.json');
+    // $json = file_get_contents($jsonPath);
+    // $employes = json_decode($json, true);
+    // dd($employes);
+    $roles = Role::all(); // Récupérer tous les rôles
+    $entites = Entite::all(); // Récupérer toutes les entités
+    return view('users.user-create', compact('roles', 'entites')); // Passer les rôles et les entités à la vue
 }
 
-public function index()
+private function getEmployeByMatricule($matricule)
 {
-    $users = User::with('role')->get(); // Inclure les rôles si nécessaire
-    return view('users.index', compact('users'));
+    $jsonPath = base_path('database/db.json');
+    $json = file_get_contents($jsonPath);
+    $employes = json_decode($json, true);
+
+    foreach ($employes as $employe) {
+        if (isset($employe['matricule']) && strval($employe['matricule']) === strval($matricule)) {
+            return $employe;
+        }
+    }
+    return null;
 }
+public function getEmploye(Request $request)
+{
+    $matricule = $request->query('matricule');
+    $jsonPath = base_path('database/db.json');
+    $json = file_get_contents($jsonPath);
+    $employes = json_decode($json, true);
+
+    foreach ($employes as $employe) {
+        if (isset($employe['matricule']) && strval($employe['matricule']) === strval($matricule)) {
+            return response()->json($employe);
+        }
+    }
+    return response()->json(['error' => 'Employé introuvable'], 404);
+}
+
+// public function login(Request $request)
+// {
+//     $credentials = $request->only('email', 'password');
+
+//     if (Auth::attempt($credentials)) {
+//         $user = Auth::user();
+//         $token = $user->createToken('authToken')->plainTextToken;
+
+//         // Mail::to($user->email)->send(new DemandeMail($user));
+//         return response()->json([
+//             'access_token' => $token,
+//             'user' => $user,
+//         ]);
+
+//     }
+
+//     return response()->json(['message' => 'Identifiants invalides.'], 401);
+
+// }
+
+
+
 public function edit($id)
 {
-    $user = User::findOrFail($id); // Récupérer l'utilisateur par son ID
-    $roles = Role::all(); // Récupérer tous les rôles
-    return view('users.edit', compact('user','roles')); // Retourner une vue pour l'édition
+    $user = User::findOrFail($id);
+    $roles = Role::all();
+    $entites = Entite::all(); // Récupérer toutes les entités
+    $userEntite = $user->entite_id ? [$user->entite_id] : []; // Récupérer l'entité de l'utilisateur
+    $userRole = $user->roles->pluck('id')->toArray(); // Pour sélection multiple
+
+    return view('users.edit', compact('user', 'roles', 'userRole', 'entites', 'userEntite'));
 }
 
-// public function update(Request $request, $id)
-// {
-//     $user = User::findOrFail($id);
-//     $user->update($request->all()); // Mettre à jour les données
-//     return redirect()->route('users.index')->with('success', 'Utilisateur mis à jour avec succès.');
-// }
 
 public function update(Request $request, $id)
 {
-    $request->validate([
-        'nom' => 'required|string|max:255',
-        'prenom' => 'required|string|max:255',
-        'email' => 'required|email|max:255|unique:users,email,' . $id,
-        'telephone' => 'nullable|string|max:20',
-        'fonction' => 'nullable|string|max:255',
-        'direction' => 'nullable|string|max:255',
-        'role_id' => 'nullable|exists:roles,id',
-        'password' => 'nullable|string|min:8', // Le mot de passe est optionnel
-    ]);
 
     $user = User::findOrFail($id);
+    $request->validate([
+        'matricule' => 'required|string|max:255|unique:users,matricule,' .$user->id,
+        'entite_id' => 'nullable|integer|exists:entites,id',
+        'role_id' => 'required|exists:roles,id',
+    ]);
 
-    // Mettre à jour les champs sauf le mot de passe
-    $user->update($request->except('password'));
 
-    // Mettre à jour le mot de passe uniquement s'il est fourni
-    if ($request->filled('password')) {
-        $user->update([
-            'password' => bcrypt($request->password),
-        ]);
-    }
 
+        $roleId = $request->input('role_id');
+        $roleNames = \Spatie\Permission\Models\Role::whereIn('id', [$roleId])->pluck('name')->toArray();
+        $user->syncRoles($roleNames);
+
+    $data = $request->only(['matricule', 'entite_id']);
+
+
+
+    $user->update($data);
+
+        // Mail::to($user->email)->send(new DemandeMail($user));
+        Mail::to($user->email)->queue(new DemandeMail($user));
     return redirect()->route('users.index')->with('success', 'Utilisateur mis à jour avec succès.');
 }
 public function destroy($id)
@@ -133,5 +194,15 @@ public function destroy($id)
 
     return redirect()->route('users.index')->with('success', 'Utilisateur supprimé avec succès.');
 }
+
+ public function logout(Request $request)
+    {
+
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login')->with('success', 'Déconnexion réussie.');
+    }
 }
 

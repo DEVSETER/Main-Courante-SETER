@@ -2,13 +2,27 @@
 // app/Http/Controllers/RoleController.php
 namespace App\Http\Controllers;
 
-use App\Models\Role;
-use App\Models\Permission;
+
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class RoleController extends Controller
+
+class RoleController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:Consulter liste rôles', only: ['index']),
+            new Middleware('permission:Modifier rôle', only: ['edit']),
+            new Middleware('permission:Créer rôle', only: ['create']),
+            new Middleware('permission:Supprimer rôle', only: ['destroy']),
+        ];
+    }
+
 
 
 public function index()
@@ -22,13 +36,13 @@ public function index()
 
 
 
-    public function create()
-    {
-        $permissions = Permission::all(); // Récupérer toutes les permissions
-        // dd($permissions);
-        return view('role.role-create', compact('permissions')); // Passer les permissions à la vue
-    }
 
+public function create()
+{
+    
+    $permissions = Permission::all()->groupBy('type');
+    return view('role.role-create', compact('permissions'));
+}
 
 
 
@@ -48,6 +62,7 @@ public function store(Request $request)
     // Créer le rôle
     $role = Role::create([
         'name' => $request->name,
+        'guard_name' => 'web'
     ]);
 
     // Associer les permissions au rôle (si des permissions sont sélectionnées)
@@ -63,11 +78,19 @@ public function store(Request $request)
 
 
 
+// public function edit($id)
+// {
+//     $role = Role::with('permissions')->findOrFail($id); // Charger le rôle avec ses permissions
+//     $permissions = Permission::all(); // Charger toutes les permissions disponibles
+//     return view('role.role-edit', compact('role', 'permissions')); // Passer $role et $permissions à la vue
+// }
+
 public function edit($id)
 {
-    $role = Role::with('permissions')->findOrFail($id); // Charger le rôle avec ses permissions
-    $permissions = Permission::all(); // Charger toutes les permissions disponibles
-    return view('role.role-edit', compact('role', 'permissions')); // Passer $role et $permissions à la vue
+    $role = Role::with('permissions')->findOrFail($id);
+
+    $permissions = Permission::all()->groupBy('type');
+    return view('role.role-edit', compact('role', 'permissions'));
 }
 
 public function update(Request $request, $id)
@@ -126,5 +149,6 @@ public function update(Request $request, $id)
 
 //     return redirect()->back()->with('success', 'Toutes les permissions ont été accordées au rôle.');
 // }
+
 }
 

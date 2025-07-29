@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap"
             rel="stylesheet">
     <link rel="stylesheet" href="/assets/style.css">
+    <link rel="stylesheet" href="path/to/nice-select2.css" />
 
         @vite(['resources/css/app.css'])
 
@@ -19,6 +20,11 @@
     <script defer src="/assets/js/popper.min.js"></script>
     <script defer src="/assets/js/tippy-bundle.umd.min.js"></script>
     <script defer src="/assets/js/sweetalert.min.js"></script>
+    <!-- Dans le <head> de votre fichier, assurez-vous d'avoir : -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nice-select2@2.1.0/dist/css/nice-select2.css">
+<script src="https://cdn.jsdelivr.net/npm/nice-select2@2.1.0/dist/js/nice-select2.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 </head>
 
 

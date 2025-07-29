@@ -12,6 +12,8 @@ class Action extends Model
         'commentaire',
         'evenement_id',
         'auteur_id',
+        'message',
+        'type',
     ];
     public function evenement()
     {
@@ -27,4 +29,10 @@ class Action extends Model
     {
         return $this->belongsToMany(User::class, 'action_user');
     }
+
+    public function actionUsers()
+{
+    return $this->hasMany(Action_user::class, 'action_id');
+}
+
 }

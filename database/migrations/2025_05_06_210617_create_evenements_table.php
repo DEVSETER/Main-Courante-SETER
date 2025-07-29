@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('evenements', function (Blueprint $table) {
             $table->id();
             $table->string('date_evenement');
-            $table->bigInteger('nature_evenement_id')->foreignId('nature_evenement_id')->constrained('nature_evenement')->onDelete('cascade');
-            $table->string('location_id')->foreignId('location_id')->constrained('location')->onDelete('cascade');
+            $table->bigInteger('nature_evenement_id')->foreignId('nature_evenement_id')->constrained('nature_evenement')->onDelete('cascade')->nullable();
+            $table->string('location_id')->foreignId('location_id')->constrained('location')->onDelete('cascade')->nullable();
             $table->string('location_description')->nullable();
             $table->string('description');
-            $table->foreignId('redacteur')->constrained('users')->onDelete('cascade'); // Rédacteur de l’événement
-            $table->boolean('consequence_sur_pdt');
+            $table->string('redacteur', 100); // Rédacteur de l’événement
+            $table->boolean('consequence_sur_pdt')->nullable();
             $table->string('statut');
             $table->string('date_cloture')->nullable();;
             $table->boolean('confidentialite');

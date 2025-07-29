@@ -1,50 +1,3 @@
-{{-- <x-layout.default>
-
-<div class="container">
-            <button  class="btn btn-primary flex items-center">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2">
-                    <circle cx="10" cy="6" r="4" stroke="currentColor" stroke-width="1.5" />
-                    <path opacity="0.5"
-                        d="M18 17.5C18 19.9853 18 22 10 22C2 22 2 19.9853 2 17.5C2 15.0147 5.58172 13 10 13C14.4183 13 18 15.0147 18 17.5Z"
-                        stroke="currentColor" stroke-width="1.5" />
-                    <path d="M21 10H19M19 10H17M19 10L19 8M19 10L19 12" stroke="currentColor"
-                        stroke-width="1.5" stroke-linecap="round" />
-                </svg>
-                <a href="/permissions" target="_blank">Ajouter un Privilège</a>
-            </button>
-    <h1>Liste des Permissions</h1>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nom</th>
-                <th>Description</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($permissions as $permission)
-            <tr>
-                <td>{{ $permission->id }}</td>
-                <td>{{ $permission->name }}</td>
-                <td>{{ $permission->description }}</td>
-                <td>
-                    <a href="{{ route('permissions.edit', $permission->id) }}" class="btn btn-primary btn-sm">Modifier</a>
-                    <form action="{{ route('permissions.destroy', $permission->id) }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette permission ?')">Supprimer</button>
-                    </form>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
-
-</x-layout.default> --}}
-
 <x-layout.default>
 
     {{-- <pre>{{ json_encode($permissions, JSON_PRETTY_PRINT) }}</pre> --}}
@@ -74,7 +27,7 @@
 </div>
 
             <!-- Bouton aligné à droite -->
-            <button  class="btn btn-primary flex items-center" style="background-color: #67152e; border-color: #67152e; color: #fff;">
+            {{-- <button  class="btn btn-primary flex items-center" style="background-color: #67152e; border-color: #67152e; color: #fff;">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                     xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2">
                     <circle cx="10" cy="6" r="4" stroke="currentColor" stroke-width="1.5" />
@@ -85,7 +38,7 @@
                         stroke-width="1.5" stroke-linecap="round" />
                 </svg>
                 <a href="/permissions">Ajouter privilège</a>
-            </button>
+            </button> --}}
         </div>
         <div class="panel">
             <h5 class="md:absolute md:top-[25px] md:mb-0 mb-5 font-semibold text-lg dark:text-white-light">Privilège</h5>
@@ -135,13 +88,14 @@
     document.addEventListener("alpine:init", () => {
         Alpine.data("miscellaneous", () => ({
             columns: [
-                { name: 'Id', hidden: false },
+                { name: 'Numéro', hidden: false },
                 { name: 'Nom', hidden: false },
+                { name: 'Type', hidden: false },
                 { name: 'Crée le', hidden: false },
                 { name: 'Action', hidden: false },
             ],
             hideCols: [],
-            showCols: [0, 1, 2, 3],
+            showCols: [0, 1, 2, 3,4],
             datatable1: null,
             permissions: @json($permissions), // Injecter les permissions depuis Laravel
 
@@ -162,6 +116,8 @@
                 let data = this.permissions.map((permission) => [
                     permission.id,
                     permission.name,
+                    permission.type,
+
                     formatDate(permission.created_at), // Formater la date
                     `
                         <ul class="flex items-center justify-center gap-2">

@@ -15,7 +15,7 @@
                             <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl" style="color: #67152e; border-color: #ebba7d;">Modifier la Liste de Diffusion</h1>
                             <p class="text-base font-bold leading-normal text-white-dark">Modifiez le nom de la liste de diffusion et sélectionnez les utilisateurs, puis enregistrez.</p>
                         </div>
-                        <form class="space-y-5 dark:text-white" id="formUtilisateur" action="{{ route('liste_diffusions.update', $liste->id) }}" method="POST">
+                        {{-- <form class="space-y-5 dark:text-white" id="formUtilisateur" action="{{ route('liste_diffusions.update', $liste->id) }}" method="POST">
                             @csrf
                             @method('PUT')
 
@@ -77,7 +77,82 @@
                                     Enregistrer
                                 </button>
                             </div>
-                        </form>
+                        </form> --}}
+                                                        <form class="space-y-5 dark:text-white" id="formUtilisateur" action="{{ route('liste_diffusions.update', $liste->id) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+
+                                    <!-- Champ Nom -->
+                                    <div>
+                                        <label for="nom">Nom</label>
+                                        <div class="relative text-white-dark">
+                                            <input id="nom" name="nom" type="text" placeholder="Entrez le nom de la liste" value="{{ old('nom', $liste->nom) }}" class="form-input ps-10 placeholder:text-white-dark" />
+                                            @error('nom')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <!-- Recherche d'utilisateurs -->
+                                    <div>
+                                        <label for="search">Rechercher des utilisateurs</label>
+                                        <input type="text" id="search" x-model="search" placeholder="Rechercher par email ou nom" class="form-input placeholder:text-white-dark" />
+                                    </div>
+
+                                    <!-- Liste des utilisateurs filtrés -->
+                                    <div>
+                                        <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">Utilisateurs disponibles</h2>
+                                        <div class="max-h-40 overflow-y-auto">
+                                            <template x-for="user in filteredUsers" :key="user.id">
+                                                <div class="flex items-center space-x-4 mb-4">
+                                                    <label class="inline-flex items-start space-x-2">
+                                                        <input type="checkbox"
+                                                            :id="'user-' + user.id"
+                                                            class="form-checkbox text-success"
+                                                            name="users[]"
+                                                            :value="user.id"
+                                                            @change="toggleUser(user)"
+                                                            :checked="selectedUsers.some(selected => selected.id === user.id)" />
+                                                        <div>
+                                                            <!-- Nom de l'utilisateur -->
+                                                            <span x-text="user.nom" class="text-sm font-medium text-gray-700 dark:text-gray-300"></span>
+                                                            <span x-text="user.prenom" class="text-sm font-medium text-gray-700 dark:text-gray-300"></span>
+                                                            <br>
+                                                            <!-- Email de l'utilisateur -->
+                                                            <span x-text="user.email" class="text-xs font-light text-gray-500 dark:text-gray-400"></span>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                <!-- Utilisateurs sélectionnés -->
+                                <div>
+                                    <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">Utilisateurs de la liste</h2>
+                                    <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded">
+                                        <template x-for="user in selectedUsers" :key="user.id">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <span x-text="user.email" class="text-sm text-gray-700 dark:text-gray-300"></span>
+                                                <button type="button" @click="removeUser(user)" class="text-red-500 text-sm">Retirer</button>
+                                            </div>
+                                        </template>
+                                        <p x-show="selectedUsers.length === 0" class="text-gray-500">Aucun utilisateur sélectionné.</p>
+                                    </div>
+                                </div>
+
+                                <!-- Champs cachés pour les utilisateurs sélectionnés -->
+                                <template x-for="user in selectedUsers" :key="'hidden-'+user.id">
+                                    <input type="hidden" name="users[]" :value="user.id">
+                                </template>
+
+                                <!-- Bouton de soumission -->
+                                <div class="mt-10">
+                                <button type="submit" class="btn btn-primary flex items-center w-full" style="background-color: #67152e; border-color: #67152e; color: #fff;">
+                                        Mettre à jour
+                                    </button>
+                                </div>
+                                </form>
                     </div>
                 </div>
             </div>

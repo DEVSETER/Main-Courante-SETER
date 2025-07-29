@@ -1,31 +1,17 @@
 <x-layout.default>
 
 
-    <script src="/assets/js/simple-datatables.js"></script>
-@if (session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-@endif
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <div x-data="miscellaneous">
     <div class="space-y-6">
         <div class="panel flex items-center justify-between overflow-x-auto whitespace-nowrap p-3 text-primary">
-            <!-- Titre avec icône à gauche -->
+
             <div class="flex items-center">
 
 
                         <div class="rounded-full p-1.5 text-white ring-1  ltr:mr-3 rtl:ml-3" style="background: #67152e">
-                    <!-- Icône -->
-                    {{-- <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="10" cy="6" r="4" stroke="currentColor" stroke-width="1.5" />
-                        <path opacity="0.5"
-                            d="M18 17.5C18 19.9853 18 22 10 22C2 22 2 19.9853 2 17.5C2 15.0147 5.58172 13 10 13C14.4183 13 18 15.0147 18 17.5Z"
-                            stroke="currentColor" stroke-width="1.5" />
-                        <path d="M21 10H19M19 10H17M19 10L19 8M19 10L19 12" stroke="currentColor"
-                            stroke-width="1.5" stroke-linecap="round" />
-                    </svg> --}}
+
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="10" cy="6" r="4" stroke="currentColor" stroke-width="1.5" />
                         <path opacity="0.5"
@@ -39,14 +25,16 @@
                 <span class="font-semibold text-lg font-bold" style="color: #67152e; font-weight: bold;">LISTE DES UTILISATEURS</span>
             </div>
 
-            <!-- Bouton Ajouter un utilisateur -->
+
             <button class="btn btn-primary ml-auto flex items-center" style="background-color: #67152e; border-color: #67152e; color: #fff;">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2">
                     <circle cx="10" cy="6" r="4" stroke="currentColor" stroke-width="1.5" />
                     <path opacity="0.5" d="M18 17.5C18 19.9853 18 22 10 22C2 22 2 19.9853 2 17.5C2 15.0147 5.58172 13 10 13C14.4183 13 18 15.0147 18 17.5Z" stroke="currentColor" stroke-width="1.5" />
                     <path d="M21 10H19M19 10H17M19 10L19 8M19 10L19 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
                 </svg>
+
                 <a href="{{ route('users.creation') }}" class="text-white">Ajouter un utilisateur</a>
+
             </button>
         </div>
 
@@ -88,12 +76,13 @@
     document.addEventListener("alpine:init", () => {
         Alpine.data("miscellaneous", () => ({
             columns: [
-                { name: 'Id', hidden: false },
                 { name: 'Nom', hidden: false },
                 { name: 'Prenom', hidden: false },
+                { name: 'Matricule', hidden: false },
                 { name: 'Email', hidden: false },
                 { name: 'Direction', hidden: false },
                 { name: 'Fonction', hidden: false },
+                { name: 'Entité', hidden: false },
                 { name: 'Telephone', hidden: false },
                 { name: 'Role', hidden: false },
                 { name: 'Actions', hidden: false },
@@ -106,34 +95,40 @@
 
 init() {
     let headers = this.columns.map((col) => col.name);
-    let data = this.users.map((user) => [
-        user.id,
-        user.nom,
-        user.prenom,
-        user.email,
-        user.direction,
-        user.fonction,
-        user.telephone,
-        user.role?.name || 'N/A',
+   let data = this.users.map((user) => [
+    user.nom,
+    user.prenom,
+    user.matricule,
+    user.email,
+    user.direction,
+    user.fonction,
+    user.entite ? user.entite.nom : 'N/A', // <-- ici
+    user.telephone,
+    (user.roles && user.roles.length > 0)
+        ? user.roles.map(r => r.name).join(', ')
+        : 'N/A',
         `
       <ul class="flex items-center justify-center gap-2">
             <!-- Icône pour éditer -->
             <li>
+
+
                 <a href="/users/${user.id}/edit" x-tooltip="Edit">
                     <svg width="24" height="24" viewBox="0 0 24 24"
-                                                    fill="none" xmlns="http://www.w3.org/2000/svg"
-                                                    class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2">
-                                                    <path
-                                                        d="M15.2869 3.15178L14.3601 4.07866L5.83882 12.5999L5.83881 12.5999C5.26166 13.1771 4.97308 13.4656 4.7249 13.7838C4.43213 14.1592 4.18114 14.5653 3.97634 14.995C3.80273 15.3593 3.67368 15.7465 3.41556 16.5208L2.32181 19.8021L2.05445 20.6042C1.92743 20.9852 2.0266 21.4053 2.31063 21.6894C2.59466 21.9734 3.01478 22.0726 3.39584 21.9456L4.19792 21.6782L7.47918 20.5844L7.47919 20.5844C8.25353 20.3263 8.6407 20.1973 9.00498 20.0237C9.43469 19.8189 9.84082 19.5679 10.2162 19.2751C10.5344 19.0269 10.8229 18.7383 11.4001 18.1612L11.4001 18.1612L19.9213 9.63993L20.8482 8.71306C22.3839 7.17735 22.3839 4.68748 20.8482 3.15178C19.3125 1.61607 16.8226 1.61607 15.2869 3.15178Z"
-                                                        stroke="currentColor" stroke-width="1.5" />
-                                                    <path opacity="0.5"
-                                                        d="M14.36 4.07812C14.36 4.07812 14.4759 6.04774 16.2138 7.78564C17.9517 9.52354 19.9213 9.6394 19.9213 9.6394M4.19789 21.6777L2.32178 19.8015"
-                                                        stroke="currentColor" stroke-width="1.5" />
-                                                </svg>
-                </a>
+                    fill="none" xmlns="http://www.w3.org/2000/svg"
+                    class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2">
+                    <path
+                    d="M15.2869 3.15178L14.3601 4.07866L5.83882 12.5999L5.83881 12.5999C5.26166 13.1771 4.97308 13.4656 4.7249 13.7838C4.43213 14.1592 4.18114 14.5653 3.97634 14.995C3.80273 15.3593 3.67368 15.7465 3.41556 16.5208L2.32181 19.8021L2.05445 20.6042C1.92743 20.9852 2.0266 21.4053 2.31063 21.6894C2.59466 21.9734 3.01478 22.0726 3.39584 21.9456L4.19792 21.6782L7.47918 20.5844L7.47919 20.5844C8.25353 20.3263 8.6407 20.1973 9.00498 20.0237C9.43469 19.8189 9.84082 19.5679 10.2162 19.2751C10.5344 19.0269 10.8229 18.7383 11.4001 18.1612L11.4001 18.1612L19.9213 9.63993L20.8482 8.71306C22.3839 7.17735 22.3839 4.68748 20.8482 3.15178C19.3125 1.61607 16.8226 1.61607 15.2869 3.15178Z"
+                    stroke="currentColor" stroke-width="1.5" />
+                    <path opacity="0.5"
+                    d="M14.36 4.07812C14.36 4.07812 14.4759 6.04774 16.2138 7.78564C17.9517 9.52354 19.9213 9.6394 19.9213 9.6394M4.19789 21.6777L2.32178 19.8015"
+                    stroke="currentColor" stroke-width="1.5" />
+                    </svg>
+                    </a>
             </li>
             <!-- Icône pour supprimer -->
             <li>
+
                 <form action="/users/${user.id}" method="POST" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
                     <input type="hidden" name="_method" value="DELETE">
                     <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
@@ -144,25 +139,26 @@ init() {
                         </svg>
                     </button>
                 </form>
+
             </li>
         </ul>
         `
     ]);
 
     this.datatable1 = new simpleDatatables.DataTable('#myTable1', {
-        data: {
-            headings: headers,
-            data: data,
-        },
-        perPage: 10,
-        perPageSelect: [10, 20, 30, 50, 100],
-        columns: [{ select: 0, sort: 'asc' }],
-        layout: {
-            top: "{search}",
-            bottom: "{info}{select}{pager}",
-        },
-    });
-},
+                    data: {
+                        headings: headers,
+                        data: data,
+                    },
+                    perPage: 10,
+                    perPageSelect: [10, 20, 30, 50, 100],
+                    columns: [{ select: 0, sort: 'asc' }],
+                    layout: {
+                        top: "{search}",
+                        bottom: "{info}{select}{pager}",
+                    },
+                });
+            },
             showHideColumns(col, value) {
                 if (value) {
                     this.showCols.push(col);
@@ -181,5 +177,6 @@ init() {
     });
 </script>
 
+    <script src="/assets/js/simple-datatables.js"></script>
 
 </x-layout.default>

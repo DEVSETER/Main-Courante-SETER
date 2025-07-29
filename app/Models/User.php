@@ -3,10 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Models\Role;
+// use App\Models\Role;
+
 use App\Models\Action;
+use App\Models\Entite;
 use App\Models\Liste_diffusion;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Contracts\Role;
 use Laravel\Jetstream\HasProfilePhoto;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
@@ -31,14 +34,20 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'nom',
+        'prenom',
         'email',
         'password',
-        'prenom',
+        'matricule',
         'role_id',
         'telephone',
         'direction',
         'fonction',
         'entite_id',
+        'email_verified_at',
+        'sso_provider',
+        'sso_id',
+        'last_login_at',
+        'last_login_method',
 
 
     ];
@@ -74,18 +83,21 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'sso_id' => 'string',
+            'last_login_at' => 'datetime',
+            'last_login_method' => 'string',
         ];
     }
 
-    public function role()
-{
-    return $this->belongsTo(Role::class);
-}
+//     public function role()
+// {
+//     return $this->belongsTo(Role::class);
+// }
 
-public function hasPermission($permission)
-    {
-        return $this->role->permissions->contains('linelle', $permission);
-    }
+// public function hasPermission($permission)
+//     {
+//         return $this->role->permissions->contains('linelle', $permission);
+//     }
 
 public function listeDifusions()
     {
@@ -105,7 +117,11 @@ public function actionsTags()
 
 public function entite()
 {
-    return $this->belongsTo(Entite::class);
+    return $this->belongsTo(Entite::class, 'entite_id');
+}
+    public function commentaires()
+    {
+        return $this->hasMany(Commentaire::class, 'redacteur', 'id');
+    }
 }
 
-}
