@@ -204,7 +204,7 @@ private function getDestinataireNames($destinataires)
     return $noms;
 }
 
-// ✅ AJOUTER CETTE MÉTHODE pour l'envoi d'emails lors de la création
+//  AJOUTER CETTE MÉTHODE pour l'envoi d'emails lors de la création
 private function envoyerEmailsAction($evenement, $action, $destinataires, $messagePersonnalise = null)
 {
     $emailsAEnvoyer = [];
@@ -246,7 +246,7 @@ private function envoyerEmailsAction($evenement, $action, $destinataires, $messa
         // Mettre à jour le statut de l'action
         $action->update(['statut' => 'envoye']);
 
-        Log::info("✅ " . count($emailsAEnvoyer) . " emails envoyés pour l'action {$action->id}");
+        Log::info(" " . count($emailsAEnvoyer) . " emails envoyés pour l'action {$action->id}");
     } else {
         Log::warning("⚠️ Aucun email trouvé pour les destinataires de l'action {$action->id}");
     }
@@ -264,7 +264,7 @@ public function store(Request $request)
         $rules = [
             'nature_evenement_id' => 'nullable|exists:nature_evenements,id',
             'location_id' => 'nullable|integer|exists:locations,id',
-            'description' => 'required|string|min:1', // ✅ Obligatoire
+            'description' => 'required|string|min:1', //  Obligatoire
             'consequence_sur_pdt' => 'nullable|boolean',
             'redacteur' => 'nullable|string|max:255',
             'statut' => 'required|string|in:en_cours,cloture,archive',
@@ -294,7 +294,7 @@ public function store(Request $request)
             $rules['heure_appel_intervenant'] = 'nullable|date_format:Y-m-d\TH:i';
             $rules['heure_arrive_intervenant'] = 'nullable|date_format:Y-m-d\TH:i';
         }
- 
+
         $validated = $request->validate($rules);
 
             Log::info('Après validation redacteur:', ['redacteur' => $validatedData['redacteur'] ?? 'NON DÉFINI']);
@@ -317,7 +317,7 @@ public function store(Request $request)
             }
         }
 
-        // ✅ Désérialisation des commentaires avec gestion d'erreurs
+        //  Désérialisation des commentaires avec gestion d'erreurs
         $commentaires = [];
         if ($request->has('commentaires')) {
             $commentData = $request->input('commentaires');
@@ -331,7 +331,7 @@ public function store(Request $request)
             Log::info('Commentaires traités:', ['commentaires' => $commentaires]);
         }
 
-        // ✅ Création de l'événement avec tous les nouveaux champs
+        //  Création de l'événement avec tous les nouveaux champs
         $evenement = Evenement::create([
             'nature_evenement_id' => $validated['nature_evenement_id'],
             'location_id' => $validated['location_id'] ?? null,
@@ -348,13 +348,13 @@ public function store(Request $request)
             'entite' => Auth::check() && Auth::user()->entite ? Auth::user()->entite->code : $validated['entite'],
             'entite_id' => Auth::check() && Auth::user()->entite ? Auth::user()->entite->id : $validated['entite_id'],
             'impact_id' => $request->impact_id ?? null,
-            'avis_srcof' => $validated['avis_srcof'] ?? null, // ✅ Nouveau champ
-            'visa_encadrant' => $validated['visa_encadrant'] ?? null, // ✅ Nouveau champ
+            'avis_srcof' => $validated['avis_srcof'] ?? null, //  Nouveau champ
+            'visa_encadrant' => $validated['visa_encadrant'] ?? null, //  Nouveau champ
         ]);
 
         Log::info('Événement créé:', ['evenement_id' => $evenement->id]);
 
-        // ✅ Gestion de la pièce jointe
+        //  Gestion de la pièce jointe
         if ($request->hasFile('piece_jointe')) {
             $path = $request->file('piece_jointe')->store('pieces_jointes', 'public');
             $evenement->piece_jointe = $path;
@@ -363,7 +363,7 @@ public function store(Request $request)
             Log::info('Pièce jointe ajoutée:', ['path' => $path]);
         }
 
-        // ✅ Traitement du type_action individuel EN PREMIER
+        //  Traitement du type_action individuel EN PREMIER
        if ($request->filled('type_action')) {
             Log::info('=== TRAITEMENT TYPE_ACTION INDIVIDUEL ===');
 
@@ -385,7 +385,7 @@ public function store(Request $request)
             Log::info('destinataires type_action:', ['destinataires' => $destinatairesMetadata]);
 
             if (!empty($destinatairesMetadata)) {
-                // ✅ Créer le commentaire avec les noms des destinataires
+                //  Créer le commentaire avec les noms des destinataires
                 $nomsDestinataires = $this->getDestinataireNames($destinatairesMetadata);
                 $destinatairesStr = implode(', ', $nomsDestinataires);
 
@@ -420,7 +420,7 @@ public function store(Request $request)
 
                 $newAction = Action::create([
                     'evenement_id' => $evenement->id,
-                    'commentaire' => $actionCommentaire, // ✅ Commentaire descriptif
+                    'commentaire' => $actionCommentaire, 
                     'message' => $messagePersonnalise,
                     'type' => $request->type_action,
                     'auteur_id' => auth()->id(),
@@ -433,7 +433,7 @@ public function store(Request $request)
                     'user_id' => auth()->id(),
                 ]);
 
-                // ✅ Envoi des emails
+                //  Envoi des emails
                 if (in_array($request->type_action, ['demande_validation', 'aviser', 'informer'])) {
                     try {
                         $emails = $this->getDestinataireEmails($destinatairesMetadata);
@@ -457,7 +457,7 @@ public function store(Request $request)
             }
         }
 
-        // ✅ CORRECTION : Traitement des actions en tableau SEULEMENT si pas de type_action individuel
+        //  CORRECTION : Traitement des actions en tableau SEULEMENT si pas de type_action individuel
         if (!$request->filled('type_action') && !empty($actions)) {
             Log::info('=== TRAITEMENT DES ACTIONS TABLEAU ===');
             Log::info('Nombre d\'actions à traiter:', ['count' => count($actions)]);
@@ -465,7 +465,7 @@ public function store(Request $request)
             foreach ($actions as $actionIndex => $action) {
                 Log::info("Traitement action #{$actionIndex}:", ['action' => $action]);
 
-                // ✅ Extraction des destinataires
+                //  Extraction des destinataires
                 $destinatairesMetadata = $action['destinataires_metadata'] ?? $action['destinataires'] ?? [];
 
                 if (is_string($destinatairesMetadata)) {
@@ -474,7 +474,7 @@ public function store(Request $request)
 
                 Log::info('Destinataires extraits pour action:', ['destinataires' => $destinatairesMetadata]);
 
-                // ✅ Créer le commentaire d'action AVEC les noms des destinataires
+                //  Créer le commentaire d'action AVEC les noms des destinataires
                 $actionCommentaire = '';
                 $actionType = $action['type'] ?? '';
                 $actionMessage = $action['message'] ?? '';
@@ -513,10 +513,10 @@ public function store(Request $request)
                     $actionCommentaire = $action['commentaire'] ?? $actionMessage ?: 'Action sans destinataire';
                 }
 
-                // ✅ Création de l'action avec le bon commentaire
+                //  Création de l'action avec le bon commentaire
                 $newAction = Action::create([
                     'evenement_id' => $evenement->id,
-                    'commentaire' => $actionCommentaire, // ✅ Commentaire avec destinataires
+                    'commentaire' => $actionCommentaire, //  Commentaire avec destinataires
                     'message' => $actionMessage,
                     'type' => $actionType,
                     'auteur_id' => $action['auteur_id'] ?? auth()->id(),
@@ -538,7 +538,7 @@ public function store(Request $request)
                     'user_id' => $action['auteur_id'] ?? auth()->id(),
                 ]);
 
-                // ✅ Envoi d'emails
+                //  Envoi d'emails
                 if (in_array($actionType, ['demande_validation', 'aviser', 'informer']) && !empty($destinatairesMetadata)) {
                     Log::info('Traitement des emails pour action:', ['type' => $actionType]);
 
@@ -548,7 +548,7 @@ public function store(Request $request)
 
                         if (!empty($emails)) {
                             $this->sendActionEmails($newAction, $emails, $actionMessage, $actionType);
-                            Log::info("✅ Emails envoyés pour l'action {$newAction->id}");
+                            Log::info(" Emails envoyés pour l'action {$newAction->id}");
                         } else {
                             Log::warning('Aucun email trouvé - pas d\'envoi');
                         }
@@ -566,20 +566,20 @@ public function store(Request $request)
             Log::info('=== AUCUNE ACTION À TRAITER ===');
         }
 
-        // ✅ Création des commentaires (tous de type 'simple')
+        //  Création des commentaires (tous de type 'simple')
         Log::info('=== TRAITEMENT DES COMMENTAIRES ===');
         foreach ($commentaires as $comment) {
             Commentaire::create([
                 'evenement_id' => $evenement->id,
                 'redacteur' => $comment['redacteur'] ?? $evenement->redacteur,
                 'text' => $comment['text'] ?? '',
-                'type' => 'simple', // ✅ Tous les commentaires sont 'simple'
+                'type' => 'simple', //  Tous les commentaires sont 'simple'
                 'date' => $comment['date'] ?? now(),
             ]);
             Log::info('Commentaire créé:', ['text' => substr($comment['text'] ?? '', 0, 50)]);
         }
 
-        // ✅ Création du commentaire principal
+        //  Création du commentaire principal
         if (!empty($validated['commentaire'])) {
             Commentaire::create([
                 'evenement_id' => $evenement->id,
@@ -591,7 +591,7 @@ public function store(Request $request)
             Log::info('Commentaire principal créé');
         }
 
-        // ✅ Création du nouveau commentaire si fourni
+        //  Création du nouveau commentaire si fourni
         if (!empty($validated['new_comment'])) {
             Commentaire::create([
                 'evenement_id' => $evenement->id,
@@ -603,7 +603,7 @@ public function store(Request $request)
             Log::info('Nouveau commentaire créé');
         }
 
-        // ✅ Associations avec gestion d'erreurs
+        //  Associations avec gestion d'erreurs
         if (!empty($validated['location_id'])) {
             $location = Location::find($validated['location_id']);
             if ($location) {
@@ -627,7 +627,7 @@ public function store(Request $request)
             Log::info('Impact associé:', ['impact_id' => $validated['impact_id']]);
         }
 
-        // ✅ Chargement des relations pour la réponse
+        //  Chargement des relations pour la réponse
         $evenement->load([
             'location',
             'nature_evenement',
@@ -637,9 +637,9 @@ public function store(Request $request)
             'entite'
         ]);
 
-        Log::info('✅ Événement créé avec succès:', ['evenement_id' => $evenement->id]);
+        Log::info(' Événement créé avec succès:', ['evenement_id' => $evenement->id]);
 
-        // ✅ Réponse unifiée
+        //  Réponse unifiée
         if ($request->expectsJson() || $request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'success' => true,
@@ -891,7 +891,7 @@ public function update(Request $request, $id)
 
           if ($request->has('impact_id')) {
             $evenement->impact_id = $request->impact_id;
-            Log::info('✅ Impact ID assigné:', ['impact_id' => $request->impact_id]);
+            Log::info(' Impact ID assigné:', ['impact_id' => $request->impact_id]);
         }
 
         if ($request->has('type_action') && in_array($request->type_action, ['demande_validation', 'aviser', 'informer'])) {
@@ -1250,7 +1250,7 @@ public function diffuserEvenement(Request $request, Evenement $evenement)
             ])
         ]);
 
-        \Log::info('Événement diffusé avec succès', [
+        Log::info('Événement diffusé avec succès', [
             'evenement_id' => $evenement->id,
             'nombre_emails' => count($emails),
             'destinataires' => $destinatairesNoms,
@@ -1267,7 +1267,7 @@ public function diffuserEvenement(Request $request, Evenement $evenement)
         ]);
 
     } catch (\Exception $e) {
-        \Log::error('Erreur lors de la diffusion de l\'événement ' . $evenement->id . ': ' . $e->getMessage());
+        Log::error('Erreur lors de la diffusion de l\'événement ' . $evenement->id . ': ' . $e->getMessage());
 
         return response()->json([
             'success' => false,

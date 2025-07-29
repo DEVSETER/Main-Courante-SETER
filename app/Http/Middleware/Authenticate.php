@@ -19,7 +19,7 @@ class Authenticate
                 return response()->json(['message' => 'Unauthenticated.'], 401);
             }
 
-            return redirect()->route('login'); // redirection si utilisateur non authentifié
+            return redirect()->route('auth.login'); // redirection si utilisateur non authentifié
         }
 
         return $next($request);

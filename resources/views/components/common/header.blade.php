@@ -325,7 +325,7 @@
 
         <!-- ✅ DÉCONNEXION - Aligné correctement -->
         <li>
-            <form method="POST" action="{{ route('logout') }}">
+            <form method="POST" action="{{ route('auth.logout') }}">
                 @csrf
                 <button type="submit" class="dark:hover:text-white w-full text-left flex items-center px-4 py-2 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors group" @click="toggle">
                     <svg class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" width="18" height="18"

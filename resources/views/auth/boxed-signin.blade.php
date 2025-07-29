@@ -56,7 +56,7 @@
         <p class="text-gray-600 mb-6">Connectez-vous via votre compte d'entreprise</p>
     </div>
 
-    <!-- ✅ Bouton SSO principal -->
+    <!--  Bouton SSO principal -->
     <button @click="initiateSSO()"
             :disabled="loading"
             class="w-full text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed text-lg"
@@ -73,7 +73,7 @@
         </span>
     </button>
 
-    <!-- ✅ NOUVEAU : Option email seulement si Wallix échoue -->
+    <!--  NOUVEAU : Option email seulement si Wallix échoue -->
     <div x-show="showEmailOption" x-transition class="text-center">
         <p class="text-sm text-gray-500 mb-2">Problème de connexion ?</p>
         <button @click="showEmailForm = true"
@@ -162,17 +162,17 @@ document.addEventListener('alpine:init', () => {
         loading: false,
         showEmailForm: false,
         showTokenSent: false,
-        showEmailOption: false, // ✅ NOUVEAU : Contrôle l'affichage de l'option email
+        showEmailOption: false,
         email: '',
         tokenExpiry: 0,
 
         async initiateSSO() {
             console.log('🚀 Début initiateSSO');
             this.loading = true;
-            this.showEmailOption = false; // Masquer l'option email pendant la tentative
+            this.showEmailOption = false;
 
             try {
-                const response = await fetch('/auth/initiate', {
+                const response = await fetch('/connexion/sso', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -194,14 +194,13 @@ document.addEventListener('alpine:init', () => {
                     if (result.method === 'wallix_sso') {
                         this.showMessage('Redirection vers Wallix...', 'info');
                         // La redirection se fait automatiquement
-                        // ✅ PAS d'affichage de l'option email si succès
                     } else {
-                        // ✅ Si pas de SSO disponible, proposer directement l'email
+                        //  Si pas de SSO disponible, proposer directement l'email
                         this.showEmailOption = true;
                         this.showMessage('SSO non disponible. Utilisez la connexion par email.', 'warning');
                     }
                 } else {
-                    // ✅ En cas d'échec, afficher l'option email
+                    //  En cas d'échec, afficher l'option email
                     this.showEmailOption = true;
 
                     if (result.error && (result.error.includes('unavailable') || result.error.includes('indisponible'))) {
@@ -213,7 +212,7 @@ document.addEventListener('alpine:init', () => {
             } catch (error) {
                 console.error('❌ Erreur SSO:', error);
 
-                // ✅ En cas d'erreur réseau, afficher l'option email
+                //  En cas d'erreur réseau, afficher l'option email
                 this.showEmailOption = true;
                 this.showMessage('Problème de connexion. Vous pouvez utiliser la connexion par email.', 'error');
 
@@ -232,7 +231,7 @@ document.addEventListener('alpine:init', () => {
             this.loading = true;
 
             try {
-                const response = await fetch('/auth/initiate', {
+                const response = await fetch('/connexion/email', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -274,7 +273,7 @@ document.addEventListener('alpine:init', () => {
             this.loading = true;
 
             try {
-                const response = await fetch('/auth/email/resend', {
+                const response = await fetch('/connexion/email/resend', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -309,7 +308,7 @@ document.addEventListener('alpine:init', () => {
         resetForm() {
             this.showEmailForm = false;
             this.showTokenSent = false;
-            this.showEmailOption = false; // ✅ NOUVEAU : Réinitialiser l'option email
+            this.showEmailOption = false; //  NOUVEAU : Réinitialiser l'option email
             this.email = '';
             this.tokenExpiry = 0;
             this.loading = false;

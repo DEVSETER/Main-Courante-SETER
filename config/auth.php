@@ -99,6 +99,11 @@ return [
         ],
     ],
 
+
+     'wallix' => [
+        'sso_url' => env('WALLIX_OIDC_ISSUER', 'https://test-main-courante.seter/connexion/sso'),
+        'redirect_uri' => env('WALLIX_REDIRECT_URI', 'https://test-main-courante.seter/auth/wallix/callback'),
+    ],
     /*
     |--------------------------------------------------------------------------
     | Password Confirmation Timeout

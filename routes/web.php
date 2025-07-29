@@ -26,7 +26,7 @@ use App\Http\Controllers\NatureEvenementController;
 
 
 Route::get('/', function () {
-    return redirect()->route('login');
+    return redirect()->route('auth.login');
 });
 
 Route::get('/database-unavailable', function () {
@@ -55,44 +55,34 @@ Route::get('/admin/system/status', function () {
 })->name('admin.system.status');
 
 
-// Route::group(['prefix' => 'auth'], function () {
-    Route::get('/login', [AuthenticationController::class, 'showLogin'])->name('login');
-Route::post('/auth/initiate', [AuthenticationController::class, 'initiateAuth'])->name('auth.initiate');
+Route::prefix('connexion')->group(function () {
+    Route::get('/', [AuthenticationController::class, 'showLogin'])
+         ->name('auth.login');
+
+    Route::post('/sso', [AuthenticationController::class, 'initiateSSO'])
+         ->name('auth.sso.initiate');
+
+    Route::get('/sso/callback', [AuthenticationController::class, 'handleWallixCallback'])
+         ->name('auth.sso.callback');
+
+    Route::post('/email', [AuthenticationController::class, 'initiateEmail'])
+         ->name('auth.email.initiate');
+
+    Route::post('/email/resend', [AuthenticationController::class, 'resendEmailToken'])
+         ->name('auth.email.resend');
+
+    Route::get('/email/verify/{token}', [AuthenticationController::class, 'verifyEmailToken'])
+         ->name('auth.email.verify');
+});
+
+
 Route::get('/auth/wallix/callback', [AuthenticationController::class, 'wallixCallback'])->name('auth.wallix.callback');
-Route::get('/auth/email/verify/{token}', [AuthenticationController::class, 'verifyEmailToken'])->name('auth.email.verify');
-Route::post('/auth/email/resend', [AuthenticationController::class, 'resendEmailToken'])->name('auth.email.resend');
-// Route::post('/logout', [AuthenticationController::class, 'logout'])->name('logout');
-// });
-// Route::middleware([
-//     'auth:sanctum',
-//     config('jetstream.auth_session'),
-//     'verified',
-// ])->group(function () {
-//     Route::get('/dashboard', function () {
-//         return view('dashboard');
-//     })->name('index');
-
-// });
-//Route eneite
-
-// Route::get('/login', [AuthenticationController::class, 'showLoginForm'])->name('login');
-// Route::post('/login', [AuthenticationController::class, 'redirectToWallix'])->name('login.submit');
-// Route::get('/auth/wallix/callback', [AuthenticationController::class, 'handleWallixCallback'])->name('wallix.callback');
-// Route::post('/logout', [AuthenticationController::class, 'logout'])->name('logout');
-// Route::get('/refresh-token', [AuthenticationController::class, 'refreshToken'])->name('token.refresh');
-
-// // Routes protégées
-// Route::middleware(['auth.wallix'])->group(function () {
-//     Route::get('/dashboard', function () {
-//         return view('dashboard');
-//     })->name('dashboard');
-
-//     // Autres routes protégées...
-// });
 // Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 Route::middleware(['auth'])->group(function () {
 
-
+// Route de déconnexion
+Route::post('/deconnexion', [AuthenticationController::class, 'logout'])
+     ->name('auth.logout');
 
 
 Route::get('/entites', [EntiteController::class, 'create'])->middleware('permission:Créer entité')->name('entite.creation');
@@ -142,15 +132,7 @@ Route::delete('/liste_diffusions/{id}', [ListeDiffusionController::class, 'destr
 //Route pour evenements
 
 
-// Route::get('/evenements', [EvenementController::class, 'index'])->middleware('permission:Consulter liste événements')->name('evenements.index');
-// Route::post('/evenements/store', [EvenementController::class, 'store'])->middleware('permission:Créer événement')->name('evenements.store');
-// Route::get('/evenements/create', [EvenementController::class, 'create'])->middleware('permission:Créer événement')->name('evenements.create');
-// Route::get('/evenements/{id}/edit', [EvenementController::class, 'edit'])->middleware('permission:Modifier événement')->name('evenements.edit');
-// Route::put('/evenements/{id}', [EvenementController::class, 'update'])->middleware('permission:Modifier événement')->name('evenements.update');
-// Route::delete('/evenements/{id}', [EvenementCowlntroller::class, 'destroy'])->middleware('permission:Supprimer événement')->name('evenements.destroy');
 
-
-// Ajouter cette route dans routes/web.php
 Route::post('/evenements/{evenement}/diffuser', [EvenementController::class, 'diffuserEvenement'])->name('evenements.diffuser');
 
 Route::get('/evenements', [EvenementController::class, 'index'])->middleware('permission:Consulter liste événements')->name('evenements.index');
@@ -217,38 +199,6 @@ Route::get('/archive', action: [ArchiveController::class, 'index'])->middleware(
 //   Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
 
 });
-
-// Route::fallback(function () {
-//     try {
-//         DB::connection()->getPdo();
-//         return abort(404);
-//     } catch (\Exception $e) {
-//         return view('errors.database-unavailable');
-//     }
-// });
-
-// Route::view('/dashboard', 'index');
-Route::view('/analytics', 'analytics');
-Route::view('/finance', 'finance');
-Route::view('/crypto', 'crypto');
-
-Route::view('/apps/chat', 'apps.chat');
-Route::view('/apps/mailbox', 'apps.mailbox');
-Route::view('/apps/todolist', 'apps.todolist');
-Route::view('/apps/notes', 'apps.notes');
-Route::view('/apps/scrumboard', 'apps.scrumboard');
-Route::view('/apps/contacts', 'apps.contacts');
-Route::view('/apps/calendar', 'apps.calendar');
-
-
-
-
-Route::view('/forms/basic', 'forms.basic');
-Route::view('/forms/input-group', 'forms.input-group');
-Route::view('/forms/layouts', 'forms.layouts');
-Route::view('/forms/validation', 'forms.validation');
-Route::view('/forms/input-mask', 'forms.input-mask');
-Route::view('/forms/select2', 'forms.select2');
 
 
 

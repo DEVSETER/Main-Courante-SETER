@@ -247,22 +247,7 @@
 
             </div>
 
-            <!-- Fonction -->
-            {{-- <div>
-                <label for="fonction" class="block text-sm font-medium">Fonction</label>
-                <select id="fonction" name="fonction" class="form-select mt-1 block w-full">
-                    <option value="">Sélectionner une fonction</option>
-                    <option value="CIV" {{ old('fonction') == 'CIV' ? 'selected' : '' }}>CIV</option>
-                    <option value="HOTLINE" {{ old('fonction') == 'HOTLINE' ? 'selected' : '' }}>HOTLINE</option>
-                    <option value="SUPERVISEUR COF" {{ old('fonction') == 'SUPERVISEUR COF' ? 'selected' : '' }}>SUPERVISEUR COF</option>
-                    <option value="CM" {{ old('fonction') == 'CM' ? 'selected' : '' }}>CM</option>
-                    <option value="PLANIFICATEUR" {{ old('fonction') == 'PLANIFICATEUR' ? 'selected' : '' }}>PLANIFICATEUR</option>
-                    <option value="CHEF CIRCULATION" {{ old('fonction') == 'CHEF CIRCULATION' ? 'selected' : '' }}>CHEF CIRCULATION</option>
-                </select>
-                @error('fonction')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div> --}}
+
 
             <!-- Direction -->
               <div>
