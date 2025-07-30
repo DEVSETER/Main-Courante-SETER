@@ -284,7 +284,7 @@
                     <h4 class="text-base"> {{ Auth::user()->nom}}
                         <span class="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Actif</span>
                     </h4>
-                    <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white"
+                    <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white" style="margin-left: -13px"
                         href="javascript:;">{{ Auth::user()->email }}</a>
                 </div>
             </div>
