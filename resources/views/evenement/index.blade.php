@@ -315,90 +315,70 @@
         <br>Données: <span x-text="JSON.stringify(currentEvent?.originalData?.commentaires || [])"></span>
     </div>
 
-    <template x-for="(commentaire, commentIndex) in (currentEvent?.originalData?.commentaires || [])" :key="commentaire.id || commentIndex">
-        <div class="bg-white border p-3 mb-2 rounded shadow" :class="{ 'border-green-500': commentaire.editing }">
-            <!-- En-tête du commentaire avec boutons -->
-            <div class="flex items-center justify-between mb-2">
-                <span class="inline-block px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
-                    💬 Commentaire
-                    <span x-show="commentaire.redacteur == window.user.id" class="ml-1 text-green-600">
-                    (Votre commentaire)
+  <template x-for="(commentaire, commentIndex) in (currentEvent?.originalData?.commentaires || [])" :key="commentaire.id || commentIndex">
+    <div class="bg-white border p-2 mb-2 rounded shadow" style="font-size: 12px;" :class="{ 'border-green-500': commentaire.editing }">
+        <!-- En-tête compact avec TOUTES les informations -->
+        <div class="flex items-center justify-between mb-1">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="text-xs" style="color: #059669;">💬</span>
+
+                <!-- Nom du commentateur -->
+                <span class="text-xs font-medium" style="color: #374151;"
+                      x-text="commentaire.auteur ?
+                             (commentaire.auteur.prenom + ' ' + commentaire.auteur.nom) :
+                             (commentaire.redacteur == window.user.id ?
+                              (window.user.prenom + ' ' + window.user.nom + ' (Vous)') :
+                              'Utilisateur #' + commentaire.redacteur)">
                 </span>
-                <span x-show="commentaire.redacteur != window.user.id" class="ml-1 text-orange-600">
-                    (Commentaire d'un autre utilisateur)
+
+                <!-- Heure du commentaire -->
+                <span class="text-xs" style="color: #6b7280;"
+                      x-text="commentaire.created_at ?
+                             new Date(commentaire.created_at).toLocaleString('fr-FR', {
+                                 day: '2-digit',
+                                 month: '2-digit',
+                                 year: 'numeric',
+                                 hour: '2-digit',
+                                 minute: '2-digit'
+                             }) : 'Date inconnue'">
                 </span>
-                </span>
-
-                <!-- Boutons d'action -->
-                <div class="flex items-center gap-2">
-                    <span class="text-xs text-gray-500" x-text="commentaire.created_at ? new Date(commentaire.created_at).toLocaleString() : 'Date inconnue'"></span>
-
-                    <!-- Bouton modifier -->
-                    <button type="button"
-                            class="text-blue-500 hover:text-blue-700 hover:bg-blue-50 p-1 rounded"
-                            @click="toggleCommentEdit(commentIndex)"
-                            :title="commentaire.editing ? 'Annuler modification' : 'Modifier ce commentaire'">
-                             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" x-show="!commentaire.editing">
-        <path d="M11.4001 18.1612L11.4001 18.1612L18.796 10.7653C17.7894 10.3464 16.5972 9.6582 15.4697 8.53068C14.342 7.40298 13.6537 6.21058 13.2348 5.2039L5.83882 12.5999L5.83879 12.5999C5.26166 13.1771 4.97307 13.4657 4.7249 13.7838C4.43213 14.1592 4.18114 14.5653 3.97634 14.995C3.80273 15.3593 3.67368 15.7465 3.41556 16.5208L2.05445 20.6042C1.92743 20.9852 2.0266 21.4053 2.31063 21.6894C2.59466 21.9734 3.01478 22.0726 3.39584 21.9456L7.47918 20.5844C8.25351 20.3263 8.6407 20.1973 9.00498 20.0237C9.43469 19.8189 9.84082 19.5679 10.2162 19.2751C10.5343 19.0269 10.823 18.7383 11.4001 18.1612Z"/>
-        <path d="M20.8482 8.71306C22.3839 7.17735 22.3839 4.68748 20.8482 3.15178C19.3125 1.61607 16.8226 1.61607 15.2869 3.15178L14.3999 4.03882C14.4121 4.0755 14.4246 4.11268 14.4377 4.15035C14.7628 5.0875 15.3763 6.31601 16.5303 7.47002C17.6843 8.62403 18.9128 9.23749 19.85 9.56262C19.8875 9.57563 19.9245 9.58817 19.961 9.60026L20.8482 8.71306Z"/>
-    </svg>
-
-                    </button>
-
-                    <!-- Bouton sauvegarder (visible seulement en mode édition) -->
-                    <button type="button"
-                            x-show="commentaire.editing"
-                            class="text-green-500 hover:text-green-700 hover:bg-green-50 p-1 rounded"
-                            @click="saveCommentEdit(commentIndex)"
-                            title="Sauvegarder les modifications">
-                        ✅
-                    </button>
-
-                    <!-- Bouton supprimer -->
-                    <button type="button"
-                            class="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded"
-                            @click="deleteComment(commentIndex)"
-                            title="Supprimer ce commentaire">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"/>
-                </svg>
-                    </button>
-                </div>
             </div>
 
-            <!-- Contenu du commentaire (mode lecture) -->
-            <div x-show="!commentaire.editing" class="mb-2">
-                <p class="text-sm font-medium text-gray-700" x-text="commentaire.text || commentaire.commentaire || 'Aucun commentaire'"></p>
+            <!-- Boutons d'action -->
+            <div class="flex items-center gap-1">
+                <button type="button" class="text-blue-500 hover:text-blue-700 p-1" style="font-size: 11px;"
+                        @click="toggleCommentEdit(commentIndex)" title="Modifier">✏️</button>
+                <button type="button" x-show="commentaire.editing" class="text-green-500 hover:text-green-700 p-1" style="font-size: 11px;"
+                        @click="saveCommentEdit(commentIndex)" title="Sauvegarder">✅</button>
+                <button type="button" class="text-red-500 hover:text-red-700 p-1" style="font-size: 11px;"
+                        @click="deleteComment(commentIndex)" title="Supprimer">🗑️</button>
             </div>
-
-            <!-- Contenu du commentaire (mode édition) -->
-            <div x-show="commentaire.editing" class="mb-2">
-                <div class="form-group mb-2">
-                    <label class="form-label text-xs">Commentaire</label>
-                    <textarea class="form-control text-sm"
-                              rows="3"
-                              x-model="commentaire.text"
-                              placeholder="Modifier le commentaire..."></textarea>
-                </div>
-            </div>
-
-<!-- Informations supplémentaires -->
-<div class="flex items-center justify-between text-xs text-gray-500">
-    <span>Commentaire #<span x-text="commentaire.id || commentIndex + 1"></span></span>
-    <div class="text-right">
-        <div x-text="commentaire.auteur ?
-                    ('Par: ' + commentaire.auteur.nom + ' ' + commentaire.auteur.prenom) :
-                    commentaire.redacteur == window.user.id ?
-                    ('Par: ' + window.user.prenom + ' ' + window.user.nom + ' (Vous)') :
-                    ('Par: Utilisateur #' + commentaire.redacteur)"></div>
-        <div class="text-xs text-gray-400" x-text="commentaire.created_at ?
-            'Créé le ' + new Date(commentaire.created_at).toLocaleDateString('fr-FR') + ' à ' + new Date(commentaire.created_at).toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}) :
-            'Date inconnue'"></div>
-    </div>
-</div>
         </div>
 
-    </template>
+        <!-- Contenu compact -->
+        <div x-show="!commentaire.editing" style="margin-bottom: 8px;">
+            <p class="text-xs" x-text="commentaire.text || commentaire.commentaire || 'Aucun commentaire'"
+               style="margin: 0; line-height: 1.4; color: #374151;"></p>
+        </div>
+
+        <!-- Mode édition compact -->
+        <div x-show="commentaire.editing" style="margin-bottom: 8px;">
+            <textarea class="form-control" rows="2" x-model="commentaire.text"
+                      style="font-size: 11px; width: 100%;"></textarea>
+        </div>
+
+        <!-- Informations supplémentaires en bas -->
+        <div class="text-xs" style="color: #9ca3af; border-top: 1px solid #f3f4f6; padding-top: 4px; margin-top: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Commentaire #<span x-text="commentaire.id || (commentIndex + 1)"></span></span>
+                <span x-show="commentaire.updated_at && commentaire.updated_at !== commentaire.created_at"
+                      style="font-style: italic;">
+                    Modifié le <span x-text="new Date(commentaire.updated_at).toLocaleDateString('fr-FR')"></span>
+                </span>
+            </div>
+        </div>
+    </div>
+</template>
 </div>
                                     </div>
                                 </td>
@@ -787,50 +767,133 @@
                                 </div>
 
                                 <!-- Template actions existant (version compacte) -->
-                                <template x-for="(action, actionIndex) in (currentEvent?.originalData?.actions || [])" :key="action.id || actionIndex">
-                                    <div class="bg-white border p-2 mb-2 rounded shadow" style="font-size: 12px;" :class="{ 'border-blue-500': action.editing }">
-                                        <!-- En-tête compact -->
-                                        <div class="flex items-center justify-between mb-1">
-                                            <span class="inline-block px-2 py-1 rounded text-xs font-medium"
-                                                  :class="{
-                                                    'bg-blue-100 text-blue-800': action.type === 'demande_validation',
-                                                    'bg-yellow-100 text-yellow-800': action.type === 'aviser',
-                                                    'bg-green-100 text-green-800': action.type === 'informer',
-                                                    'bg-gray-100 text-gray-800': action.type === 'texte_libre'
-                                                  }"
-                                                  x-text="action.type === 'demande_validation' ? '📋' :
-                                                         action.type === 'aviser' ? '⚠️' :
-                                                         action.type === 'informer' ? 'ℹ️' : '💭'">
-                                            </span>
+<template x-for="(action, actionIndex) in (currentEvent?.originalData?.actions || [])" :key="action.id || actionIndex">
+    <div class="bg-white border p-2 mb-2 rounded shadow" style="font-size: 12px;" :class="{ 'border-blue-500': action.editing }">
+        <!-- En-tête compact avec TOUTES les informations CORRIGÉES -->
+        <div class="flex items-center justify-between mb-1">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="inline-block px-2 py-1 rounded text-xs font-medium"
+                      :class="{
+                        'bg-blue-100 text-blue-800': action.type === 'demande_validation',
+                        'bg-yellow-100 text-yellow-800': action.type === 'aviser',
+                        'bg-green-100 text-green-800': action.type === 'informer',
+                        'bg-gray-100 text-gray-800': action.type === 'texte_libre'
+                      }"
+                      x-text="action.type === 'demande_validation' ? '📋 Validation' :
+                             action.type === 'aviser' ? '⚠️ Avertir' :
+                             action.type === 'informer' ? 'ℹ️ Informer' : '💭 Libre'">
+                </span>
 
-                                            <!-- Boutons compacts -->
-                                            <div class="flex items-center gap-1">
-                                                <button type="button" class="text-blue-500 hover:text-blue-700 p-1" style="font-size: 11px;"
-                                                        @click="toggleActionEdit(actionIndex)" title="Modifier">✏️</button>
-                                                <button type="button" x-show="action.editing" class="text-green-500 hover:text-green-700 p-1" style="font-size: 11px;"
-                                                        @click="saveActionEdit(actionIndex)" title="Sauvegarder">✅</button>
-                                                <button type="button" class="text-red-500 hover:text-red-700 p-1" style="font-size: 11px;"
-                                                        @click="deleteAction(actionIndex)" title="Supprimer">🗑️</button>
-                                            </div>
-                                        </div>
+                <!-- Auteur de l'action CORRIGÉ -->
+                <span class="text-xs font-medium" style="color: #374151;"
+                      x-text="(() => {
+                          // Vérifier si on a un auteur avec nom et prénom
+                          if (action.auteur && action.auteur.prenom && action.auteur.nom) {
+                              return action.auteur.prenom + ' ' + action.auteur.nom;
+                          }
+                          // Vérifier si on a un utilisateur via auteur_id
+                          if (action.auteur_id && window.users) {
+                              const user = window.users.find(u => u.id == action.auteur_id);
+                              if (user && user.prenom && user.nom) {
+                                  return user.prenom + ' ' + user.nom + (action.auteur_id == window.user.id ? ' (Vous)' : '');
+                              }
+                          }
+                          // Vérifier si on a un utilisateur via user_id (alternative)
+                          if (action.user_id && window.users) {
+                              const user = window.users.find(u => u.id == action.user_id);
+                              if (user && user.prenom && user.nom) {
+                                  return user.prenom + ' ' + user.nom + (action.user_id == window.user.id ? ' (Vous)' : '');
+                              }
+                          }
+                          // Fallback si c'est l'utilisateur actuel
+                          if (action.auteur_id == window.user.id || action.user_id == window.user.id) {
+                              return 'Vous';
+                          }
+                          // Dernier fallback
+                          return 'Utilisateur #' + (action.auteur_id || action.user_id || 'inconnu');
+                      })()">
+                </span>
 
-                                        <!-- Contenu compact -->
-                                        <div x-show="!action.editing">
-                                            <p class="text-xs" x-text="action.commentaire || 'Aucun commentaire'" style="margin: 0;"></p>
-                                        </div>
+                <!-- Heure de l'action CORRIGÉE -->
+                <span class="text-xs" style="color: #6b7280;"
+                      x-text="(() => {
+                          const dateStr = action.created_at || action.date;
+                          if (!dateStr) return 'Date inconnue';
 
-                                        <!-- Mode édition compact -->
-                                        <div x-show="action.editing" style="font-size: 11px;">
-                                            <select class="form-control mb-1" x-model="action.type" style="font-size: 11px; padding: 2px;">
-                                                <option value="texte_libre">💭 Commentaire</option>
-                                                <option value="demande_validation">📋 Validation</option>
-                                                <option value="aviser">⚠️ Aviser</option>
-                                                <option value="informer">ℹ️ Informer</option>
-                                            </select>
-                                            <textarea class="form-control" rows="2" x-model="action.commentaire" style="font-size: 11px;"></textarea>
-                                        </div>
-                                    </div>
-                                </template>
+                          try {
+                              const date = new Date(dateStr);
+                              if (isNaN(date.getTime())) return 'Date invalide';
+
+                              return date.toLocaleString('fr-FR', {
+                                  day: '2-digit',
+                                  month: '2-digit',
+                                  year: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                              });
+                          } catch (e) {
+                              return 'Date invalide';
+                          }
+                      })()">
+                </span>
+            </div>
+
+            <!-- Boutons compacts -->
+            <div class="flex items-center gap-1">
+                <button type="button" class="text-blue-500 hover:text-blue-700 p-1" style="font-size: 11px;"
+                        @click="toggleActionEdit(actionIndex)" title="Modifier">✏️</button>
+                <button type="button" x-show="action.editing" class="text-green-500 hover:text-green-700 p-1" style="font-size: 11px;"
+                        @click="saveActionEdit(actionIndex)" title="Sauvegarder">✅</button>
+                <button type="button" class="text-red-500 hover:text-red-700 p-1" style="font-size: 11px;"
+                        @click="deleteAction(actionIndex)" title="Supprimer">🗑️</button>
+            </div>
+        </div>
+
+        <!-- Contenu compact -->
+        <div x-show="!action.editing" style="margin-bottom: 8px;">
+            <p class="text-xs" x-text="action.commentaire || action.description || 'Aucun commentaire'"
+               style="margin: 0; line-height: 1.4; color: #374151;"></p>
+
+            <!-- Destinataires si présents -->
+            <div x-show="action.destinataires_metadata && action.destinataires_metadata.length > 0"
+                 style="margin-top: 4px; padding: 4px; background: #f8fafc; border-radius: 4px;">
+                <span class="text-xs" style="color: #6b7280;">
+                    🎯 Destinataires :
+                    <span x-text="getDestinataireNamesFromIds(action.destinataires_metadata).join(', ')"></span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Mode édition compact -->
+        <div x-show="action.editing" style="font-size: 11px; margin-bottom: 8px;">
+            <select class="form-control mb-1" x-model="action.type" style="font-size: 11px; padding: 2px;">
+                <option value="texte_libre">💭 Commentaire</option>
+                <option value="demande_validation">📋 Validation</option>
+                <option value="aviser">⚠️ Aviser</option>
+                <option value="informer">ℹ️ Informer</option>
+            </select>
+            <textarea class="form-control" rows="2" x-model="action.commentaire"
+                      style="font-size: 11px; width: 100%;"></textarea>
+        </div>
+
+        <!-- Informations supplémentaires en bas -->
+        <div class="text-xs" style="color: #9ca3af; border-top: 1px solid #f3f4f6; padding-top: 4px; margin-top: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Action #<span x-text="action.id || (actionIndex + 1)"></span></span>
+                <span x-show="action.updated_at && action.updated_at !== action.created_at"
+                      style="font-style: italic;">
+                    Modifiée le <span x-text="(() => {
+                        try {
+                            return new Date(action.updated_at).toLocaleDateString('fr-FR');
+                        } catch (e) {
+                            return 'Date invalide';
+                        }
+                    })()"></span>
+                </span>
+            </div>
+        </div>
+    </div>
+</template>
                             </div>
 
                             <!-- Séparateur commentaires existants -->
@@ -857,32 +920,102 @@
                                 </div>
 
                                 <!-- Template commentaires compact -->
+
                                 <template x-for="(commentaire, commentIndex) in (currentEvent?.originalData?.commentaires || [])" :key="commentaire.id || commentIndex">
-                                    <div class="bg-white border p-2 mb-2 rounded shadow" style="font-size: 12px;" :class="{ 'border-green-500': commentaire.editing }">
-                                        <!-- En-tête compact -->
-                                        <div class="flex items-center justify-between mb-1">
-                                            <span class="text-xs" style="color: #059669;">💬</span>
-                                            <div class="flex items-center gap-1">
-                                                <button type="button" class="text-blue-500 hover:text-blue-700 p-1" style="font-size: 11px;"
-                                                        @click="toggleCommentEdit(commentIndex)" title="Modifier">✏️</button>
-                                                <button type="button" x-show="commentaire.editing" class="text-green-500 hover:text-green-700 p-1" style="font-size: 11px;"
-                                                        @click="saveCommentEdit(commentIndex)" title="Sauvegarder">✅</button>
-                                                <button type="button" class="text-red-500 hover:text-red-700 p-1" style="font-size: 11px;"
-                                                        @click="deleteComment(commentIndex)" title="Supprimer">🗑️</button>
-                                            </div>
-                                        </div>
+    <div class="bg-white border p-2 mb-2 rounded shadow" style="font-size: 12px;" :class="{ 'border-green-500': commentaire.editing }">
+        <!-- En-tête compact avec TOUTES les informations CORRIGÉES -->
+        <div class="flex items-center justify-between mb-1">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="text-xs" style="color: #059669;">💬</span>
 
-                                        <!-- Contenu compact -->
-                                        <div x-show="!commentaire.editing">
-                                            <p class="text-xs" x-text="commentaire.text || commentaire.commentaire || 'Aucun commentaire'" style="margin: 0;"></p>
-                                        </div>
+                <!-- Nom du commentateur CORRIGÉ -->
+                <span class="text-xs font-medium" style="color: #374151;"
+                      x-text="(() => {
+                          // Vérifier si on a un auteur avec nom et prénom
+                          if (commentaire.auteur && commentaire.auteur.prenom && commentaire.auteur.nom) {
+                              return commentaire.auteur.prenom + ' ' + commentaire.auteur.nom;
+                          }
+                          // Vérifier si on a un utilisateur via redacteur
+                          if (commentaire.redacteur && window.users) {
+                              const user = window.users.find(u => u.id == commentaire.redacteur);
+                              if (user && user.prenom && user.nom) {
+                                  return user.prenom + ' ' + user.nom + (commentaire.redacteur == window.user.id ? ' (Vous)' : '');
+                              }
+                          }
+                          // Fallback si c'est l'utilisateur actuel
+                          if (commentaire.redacteur == window.user.id) {
+                              return 'Vous';
+                          }
+                          // Dernier fallback
+                          return 'Utilisateur #' + (commentaire.redacteur || 'inconnu');
+                      })()">
+                </span>
 
-                                        <!-- Mode édition compact -->
-                                        <div x-show="commentaire.editing">
-                                            <textarea class="form-control" rows="2" x-model="commentaire.text" style="font-size: 11px;"></textarea>
-                                        </div>
-                                    </div>
-                                </template>
+                <!-- Heure du commentaire CORRIGÉE -->
+                <span class="text-xs" style="color: #6b7280;"
+                      x-text="(() => {
+                          const dateStr = commentaire.created_at || commentaire.date;
+                          if (!dateStr) return 'Date inconnue';
+
+                          try {
+                              const date = new Date(dateStr);
+                              if (isNaN(date.getTime())) return 'Date invalide';
+
+                              return date.toLocaleString('fr-FR', {
+                                  day: '2-digit',
+                                  month: '2-digit',
+                                  year: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                              });
+                          } catch (e) {
+                              return 'Date invalide';
+                          }
+                      })()">
+                </span>
+            </div>
+
+            <!-- Boutons d'action -->
+            <div class="flex items-center gap-1">
+                <button type="button" class="text-blue-500 hover:text-blue-700 p-1" style="font-size: 11px;"
+                        @click="toggleCommentEdit(commentIndex)" title="Modifier">✏️</button>
+                <button type="button" x-show="commentaire.editing" class="text-green-500 hover:text-green-700 p-1" style="font-size: 11px;"
+                        @click="saveCommentEdit(commentIndex)" title="Sauvegarder">✅</button>
+                <button type="button" class="text-red-500 hover:text-red-700 p-1" style="font-size: 11px;"
+                        @click="deleteComment(commentIndex)" title="Supprimer">🗑️</button>
+            </div>
+        </div>
+
+        <!-- Contenu compact -->
+        <div x-show="!commentaire.editing" style="margin-bottom: 8px;">
+            <p class="text-xs" x-text="commentaire.text || commentaire.commentaire || 'Aucun commentaire'"
+               style="margin: 0; line-height: 1.4; color: #374151;"></p>
+        </div>
+
+        <!-- Mode édition compact -->
+        <div x-show="commentaire.editing" style="margin-bottom: 8px;">
+            <textarea class="form-control" rows="2" x-model="commentaire.text"
+                      style="font-size: 11px; width: 100%;"></textarea>
+        </div>
+
+        <!-- Informations supplémentaires en bas -->
+        <div class="text-xs" style="color: #9ca3af; border-top: 1px solid #f3f4f6; padding-top: 4px; margin-top: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Commentaire #<span x-text="commentaire.id || (commentIndex + 1)"></span></span>
+                <span x-show="commentaire.updated_at && commentaire.updated_at !== commentaire.created_at"
+                      style="font-style: italic;">
+                    Modifié le <span x-text="(() => {
+                        try {
+                            return new Date(commentaire.updated_at).toLocaleDateString('fr-FR');
+                        } catch (e) {
+                            return 'Date invalide';
+                        }
+                    })()"></span>
+                </span>
+            </div>
+        </div>
+    </div>
+</template>
                             </div>
 
                             <!-- Séparateur nouvelle action -->

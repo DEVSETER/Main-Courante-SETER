@@ -1,18 +1,81 @@
 <x-layout.auth>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <style>
+    <style>
+        .p-5 {
+            padding: 3.25rem;
+        }
+
+        /* Styles pour maintenir la taille fixe au zoom */
+        .fixed-size-container {
+            width: 320px !important;
+            min-width: 320px !important;
+            max-width: 320px !important;
+        }
+
+        .fixed-size-title {
+            font-size: 28px !important;
+            line-height: 32px !important;
+        }
+
+        .fixed-size-logo {
+            width: 160px !important;
+            height: 160px !important;
+        }
+
+        .fixed-size-button {
+            height: 48px !important;
+            font-size: 16px !important;
+            padding: 12px 24px !important;
+        }
+
+        .fixed-size-input {
+            height: 44px !important;
+            font-size: 14px !important;
+            padding: 12px 16px !important;
+        }
+
+        .fixed-size-text {
+            font-size: 14px !important;
+            line-height: 20px !important;
+        }
+
+        .fixed-size-small-text {
+            font-size: 12px !important;
+            line-height: 16px !important;
+        }
+
+        .fixed-spacing-mb-1 { margin-bottom: 8px !important; }
+        .fixed-spacing-mb-2 { margin-bottom: 16px !important; }
+        .fixed-spacing-mb-3 { margin-bottom: 24px !important; }
+        .fixed-spacing-mb-4 { margin-bottom: 32px !important; }
+        .fixed-spacing-mt-1 { margin-top: 8px !important; }
+        .fixed-spacing-mt-2 { margin-top: 16px !important; }
+        .fixed-spacing-mt-3 { margin-top: 24px !important; }
+        .fixed-spacing-gap { gap: 16px !important; }
+
+        /* Responsive override pour maintenir les tailles */
+        @media (max-width: 768px) {
+            .fixed-size-container {
+                width: 280px !important;
+                min-width: 280px !important;
+                max-width: 280px !important;
+            }
+        }
+    </style>
     <div x-data="ssoAuth">
         <div class="absolute inset-0">
             <img src="/assets/images/auth/bg-gradient.png" alt="image" class="h-full w-full object-cover" />
         </div>
-        <div class="relative flex min-h-screen items-center justify-center bg-[url(/assets/images/auth/map.png)] bg-cover bg-center bg-no-repeat px-6 py-10 dark:bg-[#060818] sm:px-16">
+        <div class="relative flex min-h-screen items-center justify-center bg-[url(/assets/images/auth/map.png)] bg-cover bg-center bg-no-repeat px-6 py-10 dark:bg-[#060818] sm:px-16" >
             <!-- Images de décoration -->
             <img src="/assets/images/auth/coming-soon-object1.png" alt="image" class="absolute left-0 top-1/2 h-full max-h-[893px] -translate-y-1/2" />
             <img src="/assets/images/auth/coming-soon-object2.png" alt="image" class="absolute left-24 top-0 h-40 md:left-[30%]" />
             <img src="/assets/images/auth/coming-soon-object3.png" alt="image" class="absolute right-0 top-0 h-[300px]" />
             <img src="/assets/images/auth/polygon-object.svg" alt="image" class="absolute bottom-0 end-[28%]" />
 
-            <div class="relative flex w-full max-w-[1502px] flex-col justify-between overflow-hidden rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 lg:min-h-[758px] lg:flex-row lg:gap-10 xl:gap-0">
+            <div class="relative flex w-full max-w-[1502px] flex-col justify-between overflow-hidden rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 lg:min-h-[658px] lg:flex-row lg:gap-10 xl:gap-0 " style="padding-left: 45px !important;">
                 <!-- Panneau gauche avec dégradé -->
                 <div class="relative hidden w-full items-center justify-center p-5 lg:inline-flex lg:max-w-[835px] xl:-ms-28 ltr:xl:skew-x-[14deg] rtl:xl:skew-x-[-14deg]"
                      style="background: linear-gradient(225deg, #67152e 90%, #ebba7d 10%);">
