@@ -32,6 +32,8 @@ class Evenement extends Model
         'heure_arrive_intervenant',
         'entite',
         'entite_id',
+        'commentaire_autre_entite', 
+        'commentaire',
         'piece_jointe',
         'impact_id',
         'avis_srcof',
@@ -39,7 +41,7 @@ class Evenement extends Model
         'impact_id',
     ];
 
- 
+
 protected static function booted()
 {
     /*

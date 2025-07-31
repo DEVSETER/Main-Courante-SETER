@@ -12,9 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('evenements', function (Blueprint $table) {
-             $table->unsignedBigInteger('impact_id')->nullable()->after('entite_id');
+              $table->text('commentaire_autre_entite')->nullable()->after('avis_srcof');
 
-            $table->foreign('impact_id')->references('id')->on('impacts')->onDelete('set null');
         });
     }
 
@@ -24,9 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('evenements', function (Blueprint $table) {
-              $table->dropForeign(['impact_id']);
-
-             $table->dropColumn('impact_id');
+            $table->dropColumn('commentaire_autre_entite');
         });
     }
 };

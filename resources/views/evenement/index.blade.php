@@ -405,9 +405,7 @@
             </table>
                     </div>
 
-        <!-- NOUVEAU : Ajouter la pagination ICI -->
-        <!-- PAGINATION SIMPLIFIÉE SANS DOUBLONS -->
-     <!-- PAGINATION CORRIGÉE - STRUCTURE PROPRE -->
+        <!-- PAGINATION SIMPLIFIÉE  -->
 <div class="pagination-container" x-show="totalItems > 0">
 
     <!-- Informations de pagination -->
@@ -470,7 +468,7 @@
         </button>
     </div>
 
-    <!-- Numéros de pages (seulement si pas trop de pages) -->
+    <!-- Numéros de pages -->
     <div class="page-numbers-small" x-show="totalPages <= 15 && totalPages > 1">
         <template x-for="p in Array.from({length: totalPages}, (_, i) => i + 1)" :key="p">
             <button @click="goToPage(p)"
@@ -490,8 +488,7 @@
 </div>
         <!-- FIN DE LA PAGINATION -->
 
-{{-- filepath: c:\Projet\V0\MainCourante\MainCourante\resources\views\evenement\index.blade.php --}}
-{{-- REMPLACER la section modale (lignes ~1396-2012) par cette structure en deux colonnes : --}}
+        <!-- MODAL POUR CRÉATION/MODIFICATION D'ÉVÉNEMENT -->
 
 <div class="modal" x-show="showModal" @click="$event.target === $event.currentTarget && closeModal()">
     <div class="modal-content" style="max-width: 1400px; width: 95%; max-height: 90vh; overflow-y: auto;">
@@ -563,6 +560,7 @@
                                        class="form-control"
                                        type="file"
                                        :name="field.key"
+                                        accept=".pdf,.doc,.docx,.xls,.xlsx"
                                        @change="handleFileUpload($event, field.key)">
                             </div>
 
@@ -1464,6 +1462,7 @@ function transformEventsForUI(events) {
         heureArriveeIntervenant: evt.heure_arrive_intervenant || '',
         commentaire: evt.commentaires && evt.commentaires.length ?
     `${evt.commentaires.length} commentaire${evt.commentaires.length > 1 ? 's' : ''}` : '0 commentaire',
+     commentaire_autre_entite: evt.commentaire_autre_entite || '',
         action: evt.actions && evt.actions.length ?
     `${evt.actions.length} action${evt.actions.length > 1 ? 's' : ''}` : '0 action',
         post: evt.entite ? evt.entite.code : '',
@@ -1546,8 +1545,8 @@ function mainCouranteApp() {
             ],
             HOTLINE: [
                 'Numéro', 'Date et heure', 'Nature de l\'événement', 'Localisation', 'Description',
-                'Conséquence sur le PDT', 'Statut', 'Date clôture',
-                'Confidentialité', 'Impact', 'Commentaire', 'Action', 'POST', 'Pièce jointe', 'Type d\'élément', 'Opérations'
+                'Conséquence sur le PDT', 'Rédacteur','Statut', 'Date clôture',
+                'Confidentialité', 'Impact', 'Commentaire','Commentaire autre entité', 'Action', 'POST', 'Pièce jointe', 'Type d\'élément', 'Opérations'
             ],
             CM: [
                 'Title', 'Date et heure', 'Nature de l\'événement', 'Localisation', 'Description',
@@ -1558,7 +1557,7 @@ function mainCouranteApp() {
             PTP: [
                 'Numéro', 'Date', 'Heure', 'Semaine', 'Nature de l\'événement', 'Description',
                 'Rédacteur', 'Statut', 'Date clôture',
-                'Commentaire', 'Action', 'POST', 'Opérations'
+                'Commentaire','Commentaire Planificateur', 'Action', 'POST', 'Opérations'
             ]
         },
 
@@ -1580,10 +1579,10 @@ function mainCouranteApp() {
         { key: 'localisation', label: 'Localisation', type: 'select-searchable', options: this.filteredLocations },
         { key: 'description', label: 'Description', type: 'textarea' },
         { key: 'consequence', label: 'Conséquence sur le PDT', type: 'select', options: ['OUI', 'NON'] },
-        { key: 'redacteur', label: 'Rédacteur', type: 'text' },
+        { key: 'redacteur', label: 'Rédacteur', type: 'text',readonly: true },
         { key: 'statut', label: 'Statut', type: 'select', options: ['En cours', 'Terminé', 'Archivé'] },
         { key: 'commentaire', label: 'Commentaire', type: 'textarea' },
-        { key: 'visa_encadrant', label: 'Visa encadrant', type: 'text' },
+        { key: 'visa_encadrant', label: 'Visa encadrant', type: 'textarea' },
 
 
         // Séparateur pour les actions existantes
@@ -1634,7 +1633,7 @@ function mainCouranteApp() {
         { key: 'localisation', label: 'Localisation', type: 'select-searchable' },
         { key: 'description', label: 'Description', type: 'textarea' },
         { key: 'consequence', label: 'Conséquence sur le PDT', type: 'select', options: ['OUI', 'NON'] },
-        { key: 'redacteur', label: 'Rédacteur', type: 'text' },
+        { key: 'redacteur', label: 'Rédacteur', type: 'text', readonly: true },
         { key: 'statut', label: 'Statut', type: 'select', options: ['En cours', 'Terminé', 'Archivé'] },
         { key: 'confidentialite', label: 'Confidentialité', type: 'select', options: ['Confidentiel', 'Non confidentiel'] },
         { key: 'commentaire', label: 'Commentaire', type: 'textarea' },
@@ -1678,11 +1677,13 @@ function mainCouranteApp() {
         { key: 'localisation', label: 'Localisation', type: 'select-searchable' },
         { key: 'description', label: 'Description', type: 'textarea' },
         { key: 'consequence', label: 'Conséquence sur le PDT', type: 'select', options: ['OUI', 'NON'] },
+        { key: 'redacteur', label: 'Rédacteur', type: 'text', readonly: true },
         { key: 'statut', label: 'Statut', type: 'select', options: ['En cours', 'Terminé', 'Archivé'] },
         { key: 'dateCloture', label: 'Date clôture', type: 'date' },
         { key: 'confidentialite', label: 'Confidentialité', type: 'select', options: ['Confidentiel', 'Non confidentiel'] },
         { key: 'impact', label: 'Impact', type: 'select-searchable' },
         { key: 'commentaire', label: 'Commentaire', type: 'textarea' },
+        { key: 'commentaire_autre_entite', label: 'Commentaire autre entité', type: 'textarea' },
 
         // { type: 'separator', label: 'Actions existantes' },
         // { key: 'actions-list', type: 'actions-list', label: 'Liste des actions' },
@@ -1726,7 +1727,7 @@ function mainCouranteApp() {
         { key: 'localisation', label: 'Localisation', type: 'select-searchable' },
         { key: 'description', label: 'Description', type: 'textarea' },
         { key: 'consequence', label: 'Conséquence sur le PDT', type: 'select', options: ['OUI', 'NON'] },
-        { key: 'redacteur', label: 'Rédacteur', type: 'text' },
+        { key: 'redacteur', label: 'Rédacteur', type: 'text', readonly: true },
         { key: 'statut', label: 'Statut', type: 'select', options: ['En cours', 'Terminé', 'Archivé'] },
         { key: 'dateCloture', label: 'Date clôture', type: 'date' },
         { key: 'confidentialite', label: 'Confidentialité', type: 'select', options: ['Confidentiel', 'Non confidentiel'] },
@@ -1777,10 +1778,11 @@ function mainCouranteApp() {
         { key: 'dateHeure', label: 'Date et heure', type: 'datetime-local' },
         { key: 'nature', label: 'Nature de l\'événement', type: 'select-searchable' },
         { key: 'description', label: 'Description', type: 'textarea' },
-        { key: 'redacteur', label: 'Rédacteur', type: 'text' },
+        { key: 'redacteur', label: 'Rédacteur', type: 'text', readonly: true },
         { key: 'statut', label: 'Statut', type: 'select', options: ['En cours', 'Terminé', 'Archivé'] },
         { key: 'dateCloture', label: 'Date clôture', type: 'date' },
         { key: 'commentaire', label: 'Commentaire', type: 'textarea' },
+        { key: 'commentaire_autre_entite', label: 'Commentaire Planificateur', type: 'textarea' },
 
         // { type: 'separator', label: 'Actions existantes' },
         // { key: 'actions-list', type: 'actions-list', label: 'Liste des actions' },
@@ -2250,7 +2252,8 @@ switchTab(tab) {
                 'Rédacteur': 'redacteur',
                 'Statut': 'statut',
                 'Commentaire': 'commentaire',
-                'Action': 'action',
+                'Commentaire autre entité': 'commentaire_autre_entite', // VÉRIFIEZ CETTE LIGNE
+                'Commentaire Planificateur': 'commentaire_autre_entite', // POUR PTP                'Action': 'action',
                 'POST': 'post',
                 'Pièce jointe': 'pieceJointe',
                 'Type d\'élément': 'type_piece_jointe',
@@ -2431,6 +2434,7 @@ console.log('- auth()->user()->nom:', "{{ auth()->user()->nom }}");
             confidentialite: evt.confidentialite == 1 ? 'Confidentiel' : evt.confidentialite == 0 ? 'Non confidentiel' : '',
             impact: evt.impact && evt.impact.libelle ? evt.impact.libelle : '',
             commentaire: evt.commentaires && evt.commentaires.length ? evt.commentaires.map(c => c.text).join(', ') : '',
+            commentaire_autre_entite: evt.commentaire_autre_entite || '', // AJOUTÉ
             piece_jointe: evt.piece_jointe || '',
 
             // Gestion spéciale des actions
@@ -3345,6 +3349,7 @@ transformSingleEventForUI(evt) {
         heureArriveeIntervenant: evt.heure_arrive_intervenant || '',
        commentaire: evt.commentaires && evt.commentaires.length ?
          `${evt.commentaires.length} commentaire${evt.commentaires.length > 1 ? 's' : ''}` : '0 commentaire',
+         commentaire_autre_entite: evt.commentaire_autre_entite || '',
         action: evt.actions && evt.actions.length ?
          `${evt.actions.length} action${evt.actions.length > 1 ? 's' : ''}` : '0 action',
         post: evt.entite ? evt.entite.code : '',
@@ -3360,6 +3365,7 @@ transformSingleEventForUI(evt) {
         editing: false,
         originalData: {
             ...evt,
+            commentaire_autre_entite: evt.commentaire_autre_entite || '',
             commentaires: evt.commentaires ? evt.commentaires.map(comment => ({
                 id: comment.id,
                 text: comment.text || '',
@@ -3496,7 +3502,9 @@ transformSingleEventForUI(evt) {
         location_description: event.descriptionLocalisation || '',
         commentaire: event.commentaire || '',
         avis_srcof: event.avis_srcof || '',
-        visa_encadrant: event.visa_encadrant
+        visa_encadrant: event.visa_encadrant,
+        commentaire_autre_entite: event.commentaire_autre_entite || ''
+
     };
 
     //   Gestion sécurisée des dates

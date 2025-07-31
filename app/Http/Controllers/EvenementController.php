@@ -272,6 +272,7 @@ public function store(Request $request)
             'confidentialite' => 'nullable|boolean',
             'date_evenement' => 'required|date',
             'commentaire' => 'nullable|string|max:500',
+            'commentaire_autre_entite' => 'nullable|string|max:500',
             'new_comment' => 'nullable|string|max:500',
             'action_commentaire' => 'nullable|string|max:500',
             'entite' => 'nullable|string|max:255',
@@ -348,6 +349,7 @@ public function store(Request $request)
             'entite' => Auth::check() && Auth::user()->entite ? Auth::user()->entite->code : $validated['entite'],
             'entite_id' => Auth::check() && Auth::user()->entite ? Auth::user()->entite->id : $validated['entite_id'],
             'impact_id' => $request->impact_id ?? null,
+             'commentaire_autre_entite' => $validated['commentaire_autre_entite'],
             'avis_srcof' => $validated['avis_srcof'] ?? null, //  Nouveau champ
             'visa_encadrant' => $validated['visa_encadrant'] ?? null, //  Nouveau champ
         ]);
@@ -420,7 +422,7 @@ public function store(Request $request)
 
                 $newAction = Action::create([
                     'evenement_id' => $evenement->id,
-                    'commentaire' => $actionCommentaire, 
+                    'commentaire' => $actionCommentaire,
                     'message' => $messagePersonnalise,
                     'type' => $request->type_action,
                     'auteur_id' => auth()->id(),
@@ -924,6 +926,7 @@ public function update(Request $request, $id)
             'destinataires_metadata' => 'sometimes|array',
             'destinataires' => 'sometimes|array',
             'new_comment' => 'sometimes|nullable|string|max:500',
+            'commentaire_autre_entite' => 'nullable|string|max:2000',
             'avis_srcof' => 'sometimes|nullable|string|max:1000',
             'visa_encadrant' => 'sometimes|nullable|string|max:255',
             'actions' => 'sometimes|nullable',
@@ -958,7 +961,7 @@ public function update(Request $request, $id)
         $evenementFields = array_intersect_key($validated, array_flip([
             'nature_evenement_id', 'location_id', 'description', 'consequence_sur_pdt',
             'redacteur', 'statut', 'date_cloture', 'confidentialite', 'date_evenement','visa_encadrant',
-            'impact_id', 'avis_srcof', 'heure_appel_intervenant',
+            'impact_id', 'avis_srcof', 'commentaire_autre_entite', 'heure_appel_intervenant',
         ]));
 
         if (!empty($evenementFields)) {
