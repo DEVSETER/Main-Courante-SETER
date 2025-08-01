@@ -4,13 +4,11 @@ Application Laravel pour la gestion de la main courante des événements avec au
 
 ## 🚀 Fonctionnalités
 
-## 🚀 Fonctionnalités
 
 - **Authentification hybride** : SSO Wallix + Email Token
 - **Gestion des permissions** : Système basé sur Spatie Laravel Permission
 - **Gestion des événements** : CRUD complet avec workflow
 - **Multi-entités** : Support de plusieurs organisations
-- **API REST** : Endpoints pour intégrations
 - **Interface moderne** : UI responsive avec TailwindCSS
 
 ## 🛠 Technologies
@@ -110,16 +108,11 @@ La configuration Wallix se trouve dans `config/services.php` :
 ],
 ```
 
-## 👥 Utilisateurs par défaut
+##  Utilisateurs par défaut
 
-Après les seeders, vous aurez ces comptes de test :
 
-- **Super Admin** : `admin@maincourante.sn` | `password123`
-- **Superviseur** : `moussa.diop@srcof.sn` | `password123`
-- **Operateur** : `fatou.ndiaye@civ.sn` | `password123`
-- **Demo** : `demo@maincourante.sn` | `password123`
 
-## 🔐 Système d'authentification
+##  Système d'authentification
 
 ### Workflow de connexion
 
