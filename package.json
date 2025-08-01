@@ -3,7 +3,8 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "preview": "vite preview"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.7",
@@ -19,5 +20,8 @@
     },
     "dependencies": {
         "nice-select2": "^2.3.1"
+    },
+      "engines": {
+        "node": ">=18.0.0"
     }
 }

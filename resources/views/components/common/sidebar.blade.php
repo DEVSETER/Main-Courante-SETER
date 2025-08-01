@@ -342,6 +342,7 @@
                 </li>
 @endcanany
                 <li class="menu nav-item">
+                    
                     <button type="button" class="nav-link group"
                         :class="{ 'active': activeDropdown === 'authentication' }"
                         @click="activeDropdown === 'authentication' ? activeDropdown = null : activeDropdown = 'authentication'">
@@ -379,13 +380,15 @@
                     </button>
                     <ul x-cloak x-show="activeDropdown === 'authentication'" x-collapse
                         class="sub-menu text-gray-500">
+                         <form method="POST" action="{{ route('auth.logout') }}">
+                @csrf
                         <li>
-                            <a href="/auth/boxed-signin" target="_blank">Deconnexion</a>
+                            <button type="submit">Deconnexion</button>
                         </li>
-
-                        <li>
+                         </form>
+                        {{-- <li>
                             <a href="/auth/cover-password-reset" target="_blank">Recover ID Cover</a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </li>
 
