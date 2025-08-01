@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-
+use Illuminate\Support\Facades\Http;
 class AuthenticationController extends Controller
 {
     private $ssoService;
@@ -34,42 +34,45 @@ class AuthenticationController extends Controller
     /**
      * Initie l'authentification SSO
      */
-    public function initiateSSO(Request $request)
-    {
-        try {
-            Log::info('🚀 Tentative de connexion SSO');
+   public function initiateSSO(Request $request)
+{
+    try {
+        Log::info('🚀 Tentative de connexion SSO');
 
-            $wallixResult = $this->ssoService->attemptWallixAuth();
+        $wallixResult = $this->ssoService->attemptWallixAuth();
 
-            if ($wallixResult['success']) {
-                return response()->json([
-                    'success' => true,
-                    'method' => 'wallix_sso',
-                    'message' => 'Redirection vers Wallix...'
-                ]);
-            }
-
-            Log::warning('❌ SSO indisponible', [
-                'error' => $wallixResult['error'] ?? 'Erreur inconnue'
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'error' => 'Service SSO temporairement indisponible'
-            ], 503);
-
-        } catch (\Exception $e) {
-            Log::error('🔥 Erreur critique SSO', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'error' => 'Erreur lors de l\'initialisation SSO'
-            ], 500);
+        if ($wallixResult['success'] && isset($wallixResult['auth_url'])) {
+            // Si on a une URL d'autorisation, rediriger directement
+            return redirect($wallixResult['auth_url']);
         }
+
+        if ($wallixResult['success']) {
+            return response()->json([
+                'success' => true,
+                'method' => 'wallix_sso',
+                'message' => 'Redirection vers Wallix...'
+            ]);
+        }
+
+        Log::warning('❌ SSO indisponible', [
+            'error' => $wallixResult['error'] ?? 'Erreur inconnue'
+        ]);
+
+        return redirect()->route('auth.login')
+            ->with('error', 'Service SSO temporairement indisponible')
+            ->with('show_email_form', true);
+
+    } catch (\Exception $e) {
+        Log::error('🔥 Erreur critique SSO', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        return redirect()->route('auth.login')
+            ->with('error', 'Erreur lors de l\'initialisation SSO');
     }
+}
+
 
     /**
      * Initie l'authentification par email
@@ -116,39 +119,52 @@ class AuthenticationController extends Controller
     /**
      * Gère le callback Wallix SSO
      */
-    public function handleWallixCallback(Request $request)
-    {
-        try {
-            Log::info('🔄 Callback Wallix reçu');
+            public function handleWallixCallback(Request $request)
+        {
+            try {
+                Log::info('🔄 Callback Wallix reçu');
 
-            $wallixResult = $this->ssoService->handleWallixCallback($request);
+                $wallixResult = $this->ssoService->handleWallixCallback($request);
 
-            if (!$wallixResult['success']) {
-                throw new \Exception($wallixResult['error']);
+                if (!$wallixResult['success']) {
+                    throw new \Exception($wallixResult['error']);
+                }
+
+                // Si Wallix a envoyé un email avec token
+                if ($wallixResult['method'] === 'wallix_to_email') {
+                    return redirect()->route('auth.login')
+                        ->with('success', 'Un email de connexion a été envoyé à votre adresse.')
+                        ->with('info', 'Vérifiez votre boîte mail et cliquez sur le lien de connexion.')
+                        ->with('email', $wallixResult['email']);
+                }
+
+                // Si Wallix a directement authentifié l'utilisateur
+                if (isset($wallixResult['user'])) {
+                    $user = $wallixResult['user'];
+                    Auth::login($user);
+
+                    // Génération token API
+                    $token = $user->createToken('wallix_sso_' . Str::random(10))->plainTextToken;
+
+                    Log::info('✅ Authentification Wallix réussie', [
+                        'user_id' => $user->id,
+                        'email' => $user->email
+                    ]);
+
+                    return $this->handleSuccessfulLogin($request, $user, $token, 'wallix_sso');
+                }
+
+            } catch (\Exception $e) {
+                Log::error('❌ Erreur callback Wallix', [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+
+                return redirect()->route('auth.login')
+                    ->with('error', 'Erreur SSO: ' . $e->getMessage())
+                    ->with('show_email_form', true);
             }
-
-            $user = $wallixResult['user'];
-            Auth::login($user);
-
-            // Génération token API
-            $token = $user->createToken('wallix_sso_' . Str::random(10))->plainTextToken;
-
-            Log::info('✅ Authentification Wallix réussie', [
-                'user_id' => $user->id,
-                'email' => $user->email
-            ]);
-
-            return $this->handleSuccessfulLogin($request, $user, $token, 'wallix_sso');
-
-        } catch (\Exception $e) {
-            Log::error('❌ Erreur callback Wallix', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            return $this->handleFailedLogin($request, 'Erreur d\'authentification SSO');
         }
-    }
 
     /**
      * Vérifie le token reçu par email

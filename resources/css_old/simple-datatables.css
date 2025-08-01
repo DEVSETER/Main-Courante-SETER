@@ -57,11 +57,11 @@ table.table-compact tbody tr td {
 }
 
 .dataTable-pagination a {
-  @apply grid h-9 w-9 place-content-center rounded-full bg-[#e0e6ed] text-[#3b3f5c] hover:!bg-[#4361ee] hover:!text-white ltr:ml-1 rtl:mr-1 dark:bg-[#191e3a] dark:text-[#e0e6ed];
+  @apply grid h-9 w-9 place-content-center rounded-full bg-white-light text-dark hover:!bg-primary hover:!text-white ltr:ml-1 rtl:mr-1 dark:bg-[#191e3a] dark:text-white-light;
 }
 
 .dataTable-pagination .active a {
-  @apply cursor-default bg-[#4361ee] text-white;
+  @apply cursor-default bg-primary text-white;
 }
 /* sorting */
 
@@ -98,11 +98,11 @@ table.table-compact tbody tr td {
 }
 
 .asc .dataTable-sorter::after {
-  @apply border-b-[#4361ee] opacity-100;
+  @apply border-b-primary opacity-100;
 }
 
 .desc .dataTable-sorter::before {
-  @apply border-t-[#4361ee] opacity-100;
+  @apply border-t-primary opacity-100;
 }
 
 /* search, info, pagesize */
@@ -185,7 +185,7 @@ table.table-compact tbody tr td {
 }
 
 .next-prev-pagination .dataTable-pagination a {
-  @apply w-max rounded-md border border-[#4361ee] bg-transparent px-5 py-2 text-[#4361ee] dark:border-[#4361ee] dark:bg-transparent dark:text-[#4361ee];
+  @apply w-max rounded-md border border-primary bg-transparent px-5 py-2 text-primary dark:border-primary dark:bg-transparent dark:text-primary;
 }
 
 .next-prev-pagination .dataTable-bottom {

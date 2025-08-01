@@ -21,8 +21,8 @@ return new class extends Migration
             $table->string('redacteur', 100); // Rédacteur de l’événement
             $table->boolean('consequence_sur_pdt')->nullable();
             $table->string('statut');
-            $table->string('date_cloture')->nullable();;
-            $table->boolean('confidentialite');
+            $table->string('date_cloture')->nullable();
+            $table->boolean('confidentialite')->nullable();
 
 
 

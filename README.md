@@ -1,61 +1,228 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Main Courante - Système de Gestion d'Événements
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Application Laravel pour la gestion de la main courante des événements avec authentification SSO Wallix et système de permissions basé sur Spatie.
 
-## About Laravel
+## 🚀 Fonctionnalités
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Fonctionnalités
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Authentification hybride** : SSO Wallix + Email Token
+- **Gestion des permissions** : Système basé sur Spatie Laravel Permission
+- **Gestion des événements** : CRUD complet avec workflow
+- **Multi-entités** : Support de plusieurs organisations
+- **API REST** : Endpoints pour intégrations
+- **Interface moderne** : UI responsive avec TailwindCSS
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🛠 Technologies
 
-## Learning Laravel
+- **Backend** : Laravel 10+
+- **Frontend** : Blade Templates + Alpine.js + TailwindCSS
+- **Base de données** : MySQL/PostgreSQL
+- **Authentification** : Laravel Sanctum + Spatie Permission
+- **SSO** : Wallix OIDC
+- **Email** : Laravel Mail
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 📋 Prérequis
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- PHP 8.1+
+- Composer
+- Node.js & NPM
+- MySQL/PostgreSQL
+- Serveur SMTP pour les emails
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## ⚡ Installation
 
-## Laravel Sponsors
+1. **Cloner le projet**
+```bash
+git clone https://github.com/votre-username/MainCourante.git
+cd MainCourante
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+2. **Installer les dépendances**
+```bash
+composer install
+npm install
+```
 
-### Premium Partners
+3. **Configuration**
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
+4. **Base de données**
+```bash
+php artisan migrate
+php artisan db:seed
+```
 
-## Contributing
+5. **Assets**
+```bash
+npm run build
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+6. **Serveur de développement**
+```bash
+php artisan serve
+```
 
-## Code of Conduct
+## 🔧 Configuration
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Variables d'environnement principales
 
-## Security Vulnerabilities
+```env
+# Application
+APP_NAME="Main Courante"
+APP_URL=http://localhost:8000
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Base de données
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=main_courante
+DB_USERNAME=root
+DB_PASSWORD=
 
-## License
+# Email
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.example.com
+MAIL_PORT=587
+MAIL_USERNAME=your-email@example.com
+MAIL_PASSWORD=your-password
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# Session
+SESSION_LIFETIME=480
+EMAIL_TOKEN_EXPIRY=3600
+```
+
+### Configuration Wallix SSO
+
+La configuration Wallix se trouve dans `config/services.php` :
+
+```php
+'wallix' => [
+    'oidc_issuer' => 'https://your-wallix-server/sso',
+    'client_id' => 'your-client-id',
+    'client_secret' => 'your-client-secret',
+    'redirect_uri' => config('app.url') . '/auth/wallix/callback',
+    'timeout' => 30,
+    'verify_ssl' => true,
+],
+```
+
+## 👥 Utilisateurs par défaut
+
+Après les seeders, vous aurez ces comptes de test :
+
+- **Super Admin** : `admin@maincourante.sn` | `password123`
+- **Superviseur** : `moussa.diop@srcof.sn` | `password123`
+- **Operateur** : `fatou.ndiaye@civ.sn` | `password123`
+- **Demo** : `demo@maincourante.sn` | `password123`
+
+## 🔐 Système d'authentification
+
+### Workflow de connexion
+
+1. **SSO Wallix** (méthode principale)
+   - Redirection vers Wallix
+   - Récupération de l'email utilisateur
+   - Envoi automatique d'un token par email
+   - Connexion via le lien email
+
+2. **Email direct** (méthode de fallback)
+   - Saisie directe de l'email
+   - Envoi d'un token de connexion
+   - Connexion via le lien email
+
+### Permissions et rôles
+
+- **Super Admin** : Toutes les permissions
+- **Admin** : Gestion complète sauf suppressions critiques
+- **Superviseur** : Gestion opérationnelle
+- **Operateur** : Opérations courantes
+- **Technicien** : Interventions techniques
+- **Planificateur** : Planification et rapports
+- **Invite** : Lecture seule
+
+## 📁 Structure du projet
+
+```
+app/
+├── Http/Controllers/
+│   ├── AuthenticationController.php  # Gestion auth
+│   ├── EvenementController.php       # CRUD événements
+│   └── ...
+├── Models/
+│   ├── User.php                      # Utilisateur avec permissions
+│   ├── Evenement.php                # Événement
+│   ├── EmailToken.php               # Tokens d'auth
+│   └── ...
+├── Services/
+│   └── SSOAuthService.php           # Service auth SSO
+└── ...
+
+config/
+├── services.php                     # Config Wallix
+├── permission.php                   # Config Spatie
+└── ...
+
+resources/views/
+├── auth/                            # Vues d'authentification
+├── evenements/                      # Vues événements
+└── ...
+```
+
+## 🔄 Workflow des événements
+
+1. **Création** → **En cours** → **Clôturé** → **Archivé**
+2. Ajout de commentaires et actions à chaque étape
+3. Notifications et diffusion selon les permissions
+4. Génération de rapports
+
+## 📊 API Endpoints
+
+```
+GET    /api/evenements              # Liste des événements
+POST   /api/evenements              # Créer un événement
+GET    /api/evenements/{id}         # Détails d'un événement
+PUT    /api/evenements/{id}         # Modifier un événement
+DELETE /api/evenements/{id}         # Supprimer un événement
+```
+
+## 🧪 Tests
+
+```bash
+# Tests unitaires
+php artisan test
+
+# Tests avec coverage
+php artisan test --coverage
+```
+
+## 📝 Logs
+
+Les logs sont stockés dans `storage/logs/` avec les niveaux :
+- `🚀` Démarrage d'action
+- `✅` Succès
+- `❌` Erreur
+- `🔄` Traitement en cours
+- `📧` Envoi d'email
+
+## 🤝 Contribution
+
+1. Fork le projet
+2. Créer une branche feature (`git checkout -b feature/AmazingFeature`)
+3. Commit vos changements (`git commit -m 'Add AmazingFeature'`)
+4. Push vers la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrir une Pull Request
+
+## 📄 Licence
+
+Ce projet est sous licence [MIT](LICENSE).
+
+## 👨‍💻 Équipe de développement
+
+- **Backend** : Laravel + Spatie Permission
+- **Frontend** : Blade + Alpine.js + TailwindCSS
+- **SSO** : Wallix OIDC Integration
+- **Database** : MySQL avec migrations complètes

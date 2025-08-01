@@ -87,6 +87,7 @@
   animation-duration: 2s;
   -webkit-animation-duration: calc(var(--animate-duration) * 2);
   animation-duration: calc(var(--animate-duration) * 2);
+
 }
 .animate__animated.animate__slower {
   -webkit-animation-duration: 3s;

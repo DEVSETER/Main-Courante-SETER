@@ -15,17 +15,30 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'nom' => 'Test User',
-            'prenom' => 'Test',
-            'password' => bcrypt('password'),
-            'role_id' => 1,
-            'telephone' => '1234567890',
-           
-            'email' => 'test@example.com',
-        ]);
+ $this->command->info('🚀 Début du seeding...');
+
+        // Ordre important : les entités d'abord
         $this->call([
-        PermissionSeeder::class,
-    ]);
+            EntiteSeeder::class,
+            NatureEvenementSeeder::class,
+            LocationSeeder::class,
+            ImpactSeeder::class,
+            DefaultUserSeeder::class,
+            ListeDiffusionSeeder::class,
+        ]);
+
+        $this->command->info('✅ Seeding terminé avec succès!');
+        $this->command->info('');
+        $this->command->info(' Résumé des données créées:');
+        $this->command->info('   • Entités: 5');
+        $this->command->info('   • Natures d\'événements: ~30');
+        $this->command->info('   • Localisations: ~25');
+        $this->command->info('   • Impacts: 5');
+        $this->command->info('   • Utilisateurs: 6');
+        $this->command->info('   • Listes de diffusion: 5');
+        $this->command->info('');
+        $this->command->info(' Compte admin:');
+        $this->command->info('   Email: mouhamed.faye@seter.sn');
+        $this->command->info('   Password: SETER@2025');
     }
 }
