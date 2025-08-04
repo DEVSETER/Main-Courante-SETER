@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::create('actions', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->string('commentaire')->nullable();
-        //     $table->bigInteger('evenement_id')->foreignId('evenement_id')->constrained('evenements')->onDelete('cascade');
-        //     $table->bigInteger('auteur_id')->foreignId('auteur_id')->constrained('users')->onDelete('cascade');
+        Schema::create('actions', function (Blueprint $table) {
+            $table->id();
+            $table->string('commentaire')->nullable();
+            $table->bigInteger('evenement_id')->foreignId('evenement_id')->constrained('evenements')->onDelete('cascade');
+            $table->bigInteger('auteur_id')->foreignId('auteur_id')->constrained('users')->onDelete('cascade');
 
-        //     $table->timestamps();
-        // });
+            $table->timestamps();
+        });
     }
 
     /**

@@ -1,7 +1,7 @@
 /* perfect scrollbar */
 @import 'perfect-scrollbar.min.css';
 
-@import "tailwindcss";
+/* @import "tailwindcss"; */
 
 /* animate.css */
 @import 'animate.css';
@@ -45,7 +45,7 @@
 /* dragndrop */
 @import 'dragndrop.css';
 
-@import "tailwindcss";
+/* @import "tailwindcss"; */
 
 @tailwind base;
 @tailwind components;

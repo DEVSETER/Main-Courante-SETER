@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nom');
             $table->string('prenom');
-            $table->string('password')->nnullable();
+            $table->string('matricule')->unique();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('role_id')->foreignId('role_id')->constrained('roles')->onDelete('cascade');
@@ -28,11 +28,11 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
-        });
+        // Schema::create('password_reset_tokens', function (Blueprint $table) {
+        //     $table->string('email')->primary();
+        //     $table->string('token');
+        //     $table->timestamp('created_at')->nullable();
+        // });
 
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
