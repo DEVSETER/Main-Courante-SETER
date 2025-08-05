@@ -14,6 +14,7 @@ use App\Http\Controllers\ActionController;
 use App\Http\Controllers\EntiteController;
 use App\Http\Controllers\ImpactController;
 use App\Http\Controllers\ArchiveController;
+use App\Http\Controllers\MockSSOController;
 use App\Http\Controllers\RapportController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\DashboardController;
@@ -201,11 +202,50 @@ Route::get('/archive', action: [ArchiveController::class, 'index'])->middleware(
 });
 
 
+// Routes de test SSO (uniquement en mode local)
+if (app()->environment('local')) {
+    Route::prefix('mock-sso')->group(function () {
+        Route::get('/auth', [MockSSOController::class, 'authorize'])->name('mock.sso.auth');
+        Route::post('/token', [MockSSOController::class, 'token'])->name('mock.sso.token');
+        Route::get('/userinfo', [MockSSOController::class, 'userinfo'])->name('mock.sso.userinfo');
+    });
+}
 
 
+if (app()->environment('local')) {
+    Route::prefix('mock-sso')->name('mock.sso.')->group(function () {
+        Route::get('/auth', function(Request $request) {
+            return response()->json([
+                'message' => 'Mock SSO Auth endpoint',
+                'params' => $request->all()
+            ]);
+        })->name('auth');
 
+        Route::post('/token', function(Request $request) {
+            $code = $request->get('code');
 
+            if ($code && str_starts_with($code, 'mock_auth_code_')) {
+                return response()->json([
+                    'access_token' => 'mock_access_token_' . Str::random(64),
+                    'token_type' => 'Bearer',
+                    'expires_in' => 3600,
+                    'scope' => 'openid email profile'
+                ]);
+            }
 
+            return response()->json(['error' => 'invalid_grant'], 400);
+        })->name('token');
+    });
+}
+
+Route::get('/health-check', function () {
+    return response()->json([
+        'status' => 'ok',
+        'timestamp' => now(),
+        'app_url' => config('app.url'),
+        'environment' => app()->environment()
+    ]);
+});
 
 
 
