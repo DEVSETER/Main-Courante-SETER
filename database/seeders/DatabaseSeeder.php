@@ -23,8 +23,8 @@ class DatabaseSeeder extends Seeder
             NatureEvenementSeeder::class,
             LocationSeeder::class,
             ImpactSeeder::class,
-            DefaultUserSeeder::class,
             ListeDiffusionSeeder::class,
+            DefaultUserSeeder::class,
         ]);
 
         $this->command->info('✅ Seeding terminé avec succès!');

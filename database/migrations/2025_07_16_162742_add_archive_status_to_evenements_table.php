@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('evenements', function (Blueprint $table) {
             // Modifier l'enum pour inclure 'archive'
-            $table->enum('statut', ['en_cours', 'cloture', 'archive'])->change();
+            $table->enum('statut', allowed: ['en_cours', 'cloture', 'archive'])->change();
         });
 
     }
@@ -25,7 +25,7 @@ return new class extends Migration
     {
         Schema::table('evenements', function (Blueprint $table) {
             // Retour à l'ancien enum
-            $table->enum('statut', ['en_cours', 'cloture'])->change();
+            $table->enum('statut', ['en_cours', 'cloture', 'archive'])->change();
         });
     }
 };

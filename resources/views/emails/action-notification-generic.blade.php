@@ -46,8 +46,9 @@
             @endif
 
             <p>
-                <a href="{{ $eventUrl }}" style="color: #007bff; font-weight: bold;">
-                    👉 Voir l'événement dans la main courante
+               <a href="{{ $eventUrl }}"
+                style="background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                    📋 Consulter l'événement #{{ $action->evenement_id }}
                 </a>
             </p>
         </div>

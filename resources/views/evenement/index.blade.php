@@ -1,4 +1,27 @@
 <x-layout.default>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Vérifier si on doit highlight un événement
+        const urlParams = new URLSearchParams(window.location.search);
+        const highlightId = urlParams.get('highlight');
+
+        if (highlightId) {
+            // Scroll vers l'événement et le mettre en évidence
+            const eventRow = document.querySelector(`[data-event-id="${highlightId}"]`);
+            if (eventRow) {
+                eventRow.scrollIntoView({ behavior: 'smooth' });
+                eventRow.style.backgroundColor = '#fff3cd';
+                eventRow.style.border = '2px solid #ffc107';
+
+                // Enlever le highlight après 3 secondes
+                setTimeout(() => {
+                    eventRow.style.backgroundColor = '';
+                    eventRow.style.border = '';
+                }, 3000);
+            }
+        }
+    });
+    </script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <script src="/assets/js/simple-datatables.js"></script>

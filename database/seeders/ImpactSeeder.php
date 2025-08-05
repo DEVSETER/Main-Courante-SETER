@@ -10,36 +10,34 @@ class ImpactSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     */
+     */    
     public function run(): void
     {
-       $impacts = [
-            ['libelle' => 'Temps perdu', 'niveau' => 4, 'couleur' => '#dc2626'],
-            ['libelle' => 'Secours', 'niveau' => 3, 'couleur' => '#ea580c'],
-            ['libelle' => 'Pas d\'impact', 'niveau' => 2, 'couleur' => '#d97706'],
-            ['libelle' => 'Changement de PDT', 'niveau' => 1, 'couleur' => '#16a34a'],
-            ['libelle' => 'Retard trains (arrivée)', 'niveau' => 0, 'couleur' => '#6b7280'],
-            ['libelle' => 'Sollicitation CR MNVR', 'niveau' => 0, 'couleur' => '#6b7280'],
-            ['libelle' => 'Sollicitation AST-Conduite', 'niveau' => 0, 'couleur' => '#6b7280'],
-            ['libelle' => 'Heures supplémentaires', 'niveau' => 0, 'couleur' => '#6b7280'],
-            ['libelle' => 'Retard Sortie SMR', 'niveau' => 0, 'couleur' => '#6b7280'],
-            ['libelle' => 'Retard rentrée SMR', 'niveau' => 0, 'couleur' => '#6b7280'],
-            ['libelle' => 'Croisement Rame', 'niveau' => 0, 'couleur' => '#6b7280'],
-            ['libelle' => 'Pas de rame de réserve', 'niveau' => 0, 'couleur' => '#6b7280'],
-            ['libelle' => 'JS couverte par d\' autres agents', 'niveau' => 0, 'couleur' => '#6b7280'],
-            ['libelle' => 'Sollicitation CR en SV flux', 'niveau' => 0, 'couleur' => '#6b7280'],
-            ['libelle' => 'Suppression de trains', 'niveau' => 0, 'couleur' => '#6b7280'],
-            ['libelle' => 'Retard RECO', 'niveau' => 0, 'couleur' => '#6b7280'],
-            ['libelle' => 'Retard trains (depart)', 'niveau' => 0, 'couleur' => '#6b7280'],
-            ['libelle' => 'Gestion opérationnelle KO', 'niveau' => 0, 'couleur' => '#6b7280'],
-
-           
+        $impacts = [
+            'Temps perdu',
+            'Secours',
+            'Pas d\'impact',
+            'Changement de PDT',
+            'Retard trains (arrivée)',
+            'Sollicitation CR MNVR',
+            'Sollicitation AST-Conduite',
+            'Heures supplémentaires',
+            'Retard Sortie SMR',
+            'Retard rentrée SMR',
+            'Croisement Rame',
+            'Pas de rame de réserve',
+            'JS couverte par d\'autres agents',
+            'Sollicitation CR en SV flux',
+            'Suppression de trains',
+            'Retard RECO',
+            'Retard trains (depart)',
+            'Gestion opérationnelle KO'
         ];
 
         foreach ($impacts as $impact) {
             Impact::updateOrCreate(
-                ['libelle' => $impact['libelle']],
-                $impact
+                ['libelle' => $impact],
+                ['libelle' => $impact]
             );
         }
 

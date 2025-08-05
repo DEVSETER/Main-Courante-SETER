@@ -27,7 +27,9 @@ class ActionNotificationGeneric extends Mailable
         $this->message = $message;
         $this->type = $type;
         $this->email = $email;
-        $this->eventUrl = url('/evenements/' . $action->evenement_id); // Génère le lien
+    $this->eventUrl = route('evenements.index', ['highlight' => $action->evenement_id]);
+
+        // Génère le lien
 
     }
 public function build()

@@ -29,7 +29,7 @@ class ActionNotificationToUser extends Mailable
         $this->message = $message;
         $this->type = $type;
         $this->user = $user;
-            $this->eventUrl = url('/evenements/' . $action->evenement_id); // Génère le lien
+        $this->eventUrl = route('evenements.index', ['highlight' => $action->evenement_id]);
 
     }
 

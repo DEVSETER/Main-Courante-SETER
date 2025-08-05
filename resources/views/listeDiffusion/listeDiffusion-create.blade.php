@@ -456,35 +456,43 @@
 
         // ✅ Validation avant soumission - identique à user-create
         document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('formUtilisateur');
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    const nom = document.getElementById('nom').value.trim();
-                    const selectedCount = document.querySelectorAll('input[name="users[]"]:checked').length;
+    const form = document.getElementById('formUtilisateur');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const nom = document.getElementById('nom').value.trim();
 
-                    if (!nom) {
-                        e.preventDefault();
-                        alert('❌ Veuillez saisir un nom pour la liste');
-                        document.getElementById('nom').focus();
-                        return false;
-                    }
+            // ✅ CORRECTION : Compter les champs cachés au lieu des checkboxes
+            const selectedCount = document.querySelectorAll('input[type="hidden"][name="users[]"]').length;
 
-                    if (selectedCount === 0) {
-                        e.preventDefault();
-                        alert('❌ Veuillez sélectionner au moins un utilisateur');
-                        return false;
-                    }
-
-                    const confirmMessage = `Créer la liste "${nom}" avec ${selectedCount} utilisateur${selectedCount > 1 ? 's' : ''} ?`;
-                    if (!confirm(confirmMessage)) {
-                        e.preventDefault();
-                        return false;
-                    }
-
-                    console.log('✅ Création de la liste en cours...');
-                    return true;
-                });
+            if (!nom) {
+                e.preventDefault();
+                alert('❌ Veuillez saisir un nom pour la liste');
+                document.getElementById('nom').focus();
+                return false;
             }
+
+            if (selectedCount === 0) {
+                e.preventDefault();
+                alert('❌ Veuillez sélectionner au moins un utilisateur');
+                return false;
+            }
+
+            const confirmMessage = `Créer la liste "${nom}" avec ${selectedCount} utilisateur${selectedCount > 1 ? 's' : ''} ?`;
+            if (!confirm(confirmMessage)) {
+                e.preventDefault();
+                return false;
+            }
+
+            console.log('✅ Création de la liste en cours...');
+            console.log('📋 Utilisateurs sélectionnés:', selectedCount);
+
+            // Debug : afficher les IDs sélectionnés
+            const userIds = Array.from(document.querySelectorAll('input[type="hidden"][name="users[]"]')).map(input => input.value);
+            console.log('👥 IDs utilisateurs:', userIds);
+
+            return true;
         });
+    }
+});
     </script>
 </x-layout.default>
