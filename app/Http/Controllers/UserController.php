@@ -44,7 +44,6 @@ class UserController extends Controller  implements HasMiddleware
         // $users = User::with('role')->get(); // Inclure les rôles si nécessaire
         // return view('users.index', compact('users'));
     }
-
 public function store(Request $request)
 {
     $validated = $request->validate([
@@ -58,11 +57,13 @@ public function store(Request $request)
         'fonction' => 'required|string',
         'role_id' => 'required|exists:roles,id',
     ]);
+
     $employe = $this->getEmployeByMatricule($validated['matricule']);
-if (!$employe) {
+    if (!$employe) {
         return back()->withErrors(['matricule' => 'Matricule introuvable dans l\'annuaire.']);
     }
-    // dd($request);
+
+    // ✅ CORRECTION : Ajouter role_id dans User::create()
     $user = User::create([
         'nom' => $employe['nom'] ?? '',
         'prenom' => $employe['prenom'] ?? '',
@@ -72,16 +73,15 @@ if (!$employe) {
         'fonction' => $employe['fonction'] ?? null,
         'direction' => $employe['direction'] ?? null,
         'entite_id' => $validated['entite_id'],
+        'role_id' => $validated['role_id'], // ✅ AJOUTÉ : role_id manquant
     ]);
+
+    // ✅ Assigner le rôle via Spatie (si vous utilisez les deux systèmes)
     $role = Role::find($validated['role_id']);
     if ($role) {
         $user->assignRole($role->name);
     }
-    $entite= Entite::find($validated['entite_id']);
-    if ($entite) {
-        $user->entite()->associate($entite);
 
-    }
 
 
     return redirect()->route('users.index')->with('success', 'Utilisateur ajouté avec succès.');

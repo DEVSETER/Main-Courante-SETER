@@ -7,9 +7,10 @@
     'timeout' => 30,
     'verify_ssl' => true,
     'health_check_url' => 'https://test-main-courante.seter/connexion/sso',
-    
+
     'fallback' => [
         'enabled' => true,
         'session_timeout' => 28800,
     ]
 ];
+;
