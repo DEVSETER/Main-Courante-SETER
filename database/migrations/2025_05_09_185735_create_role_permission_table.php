@@ -9,9 +9,13 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+
+
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::create('role_permission', function (Blueprint $table) {
+
             $table->id();
             $table->foreignId('role_id')->constrained()->onDelete('cascade');
             $table->foreignId('permission_id')->constrained()->onDelete('cascade');

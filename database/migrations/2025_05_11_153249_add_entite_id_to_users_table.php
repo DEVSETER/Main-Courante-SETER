@@ -12,6 +12,8 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
+ 
      Schema::table('users', function (Blueprint $table) {
     $table->foreignId('entite_id')->nullable()->constrained()->onDelete('set null');
 });

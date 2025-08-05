@@ -11,6 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
+ 
         Schema::table('evenements', function (Blueprint $table) {
              $table->unsignedBigInteger('impact_id')->nullable()->after('entite_id');
 
