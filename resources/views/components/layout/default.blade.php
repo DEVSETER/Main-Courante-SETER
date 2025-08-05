@@ -19,12 +19,27 @@
     <script defer src="/assets/js/tippy-bundle.umd.min.js"></script>
     <script defer src="/assets/js/sweetalert.min.js"></script>
     @vite(['resources/css/app.css'])
+     <style>
+        /* Force le thème blanc au niveau HTML */
+        html, body {
+            background-color: white !important;
+            color: #1f2937 !important;
+        }
+
+        /* Supprime toute trace de dark mode */
+        .dark, [data-theme="dark"] {
+            background-color: white !important;
+            color: #1f2937 !important;
+        }
+
+        /* Force tous les éléments en blanc */
+        * {
+            color-scheme: light !important;
+        }
+    </style>
 </head>
 
-<body x-data="main" class="antialiased relative font-nunito text-sm font-normal overflow-x-hidden"
-    :class="[$store.app.sidebar ? 'toggle-sidebar' : '', $store.app.theme === 'dark' || $store.app.isDarkMode ?  'dark' : '', $store.app.menu, $store.app.layout, $store.app
-        .rtlClass
-    ]">
+<body x-data="main" class="antialiased relative font-nunito text-sm font-normal overflow-x-hidden" :class="{ 'rtl': $store.app.isRtl }">
 
     <!-- sidebar menu overlay -->
     <div x-cloak class="fixed inset-0 bg-[black]/60 z-50 lg:hidden" :class="{ 'hidden': !$store.app.sidebar }"

@@ -1,4 +1,4 @@
-/* perfect scrollbar */
+perfect scrollbar
 @import 'perfect-scrollbar.min.css';
 
 /* @import "tailwindcss"; */
@@ -51,6 +51,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @layer components {
     html {
         @apply scroll-smooth;
@@ -63,10 +64,10 @@
     body {
         @apply bg-[#fafafa];
     }
-
+/*
     body.dark {
         @apply bg-[#060818];
-    }
+    } */
 
     /* Panel */
     .panel {
@@ -95,7 +96,7 @@
     .sidebar:hover .nav-item > a {
         @apply w-auto;
     }
-
+/*
     .sidebar .nav-item > button,
     .sidebar .nav-item > a {
         @apply mb-1 flex w-full items-center justify-between overflow-hidden whitespace-nowrap rounded-md p-2.5 text-[#506690] hover:bg-[#000]/[0.08] hover:text-black dark:hover:bg-[#181f32] dark:hover:text-[#888ea8];
@@ -123,8 +124,56 @@ hover:text-[#4361ee] hover:before:!bg-[#4361ee] ltr:before:mr-2 rtl:before:ml-2 
     .sidebar .nav-item a div:first-child svg,
     .sidebar .nav-item button div:first-child svg {
         @apply h-5 w-5 text-black/50 dark:text-white/50;
-    }
+    } */
+/* Liens principaux */
+.sidebar .nav-item > button,
+.sidebar .nav-item > a {
+    @apply mb-1 flex w-full items-center justify-between overflow-hidden whitespace-nowrap rounded-md p-2.5
+        text-[#506690]
+        hover:bg-[#f1f2f6]
+        hover:text-[#1e293b]
+        dark:hover:bg-[#2a2f45]
+        dark:hover:text-[#cbd5e1];
+}
 
+/* Liens actifs */
+.sidebar .nav-item > button.active,
+.sidebar .nav-item > a.active {
+    @apply bg-[#e4e6eb]
+        text-[#1e293b]
+        dark:bg-[#2a2f45]
+        dark:text-[#cbd5e1];
+}
+
+.sidebar .nav-item > button.active > div > span,
+.sidebar .nav-item > a.active > div > span {
+    @apply dark:!text-[#cbd5e1];
+}
+
+/* Sous-menu */
+.sidebar ul.sub-menu li button,
+.sidebar ul.sub-menu li a {
+    @apply flex w-full items-center px-9 py-2.5
+        before:h-0.5 before:w-2 before:rounded before:bg-gray-300
+        hover:bg-[#f4f5f7]
+        hover:text-[#4361ee]
+        hover:before:!bg-[#4361ee]
+        ltr:before:mr-2 rtl:before:ml-2
+        dark:before:bg-gray-600
+        dark:hover:bg-[#252b40]
+        dark:hover:text-[#4361ee];
+}
+
+.sidebar ul.sub-menu li button.active,
+.sidebar ul.sub-menu li a.active {
+    @apply text-[#4361ee] before:bg-[#4361ee];
+}
+
+/* Icônes */
+.sidebar .nav-item a div:first-child svg,
+.sidebar .nav-item button div:first-child svg {
+    @apply h-5 w-5 text-[#64748b] dark:text-[#94a3b8]; /* gris-bleuté plus doux */
+}
     .main-container .main-content {
         @apply transition-all duration-300 lg:ltr:ml-[260px] lg:rtl:mr-[260px];
     }
@@ -533,13 +582,13 @@ hover:text-[#4361ee] hover:before:!bg-[#4361ee] ltr:before:mr-2 rtl:before:ml-2 
         @apply font-semibold;
     }
     table tbody tr {
-        @apply border-b !border-[#e0e6ed]/40 dark:!border-[#191e3a];
+        @apply border-b !border-[#e0e6ed];
     }
     table.table-hover tbody tr {
-        @apply hover:!bg-[#e0e6ed]/20 dark:hover:!bg-[#1a2941]/40;
+        @apply hover:!bg-[#e0e6ed]/20 ;
     }
     table.table-striped tbody tr:nth-child(odd) {
-        @apply !bg-[#e0e6ed]/20 dark:!bg-[#1a2941]/40;
+        @apply !bg-[#e0e6ed]/20;
     }
 
     table.dataTable-table tbody tr th,

@@ -229,61 +229,42 @@ document.addEventListener('alpine:init', () => {
         email: '',
         tokenExpiry: 0,
 
-        async initiateSSO() {
-            console.log('🚀 Début initiateSSO');
-            this.loading = true;
-            this.showEmailOption = false;
+        function initiateSSO() {
+    try {
+        // Vérifier que l'URL est correcte
+        const baseUrl = '{{ config("app.url") }}'; // Utiliser la config Laravel
+        const clientId = '{{ config("sso.client_id") }}';
+        const redirectUri = encodeURIComponent('{{ config("sso.redirect_uri") }}');
+        const scope = encodeURIComponent('openid email profile');
+        const state = generateRandomState();
 
-            try {
-                const response = await fetch('/connexion/sso', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify({ sso_only: true })
-                });
+        const authUrl = `${baseUrl}/connexion/sso/auth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`;
 
-                console.log('📡 Response status:', response.status);
+        console.log('Auth URL:', authUrl); // Debug
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const result = await response.json();
-                console.log('📥 Result:', result);
-
-                if (result.success) {
-                    if (result.method === 'wallix_sso') {
-                        this.showMessage('Redirection vers Wallix...', 'info');
-                        // La redirection se fait automatiquement
-                    } else {
-                        //  Si pas de SSO disponible, proposer directement l'email
-                        this.showEmailOption = true;
-                        this.showMessage('SSO non disponible. Utilisez la connexion par email.', 'warning');
-                    }
+        // Vérifier si l'URL est accessible
+        fetch(authUrl, { method: 'HEAD' })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = authUrl;
                 } else {
-                    //  En cas d'échec, afficher l'option email
-                    this.showEmailOption = true;
-
-                    if (result.error && (result.error.includes('unavailable') || result.error.includes('indisponible'))) {
-                        this.showMessage('Service d\'authentification temporairement indisponible.', 'warning');
-                    } else {
-                        this.showMessage('Erreur de connexion. Vous pouvez utiliser la connexion par email.', 'error');
-                    }
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
-            } catch (error) {
-                console.error('❌ Erreur SSO:', error);
+            })
+            .catch(error => {
+                console.error('Erreur SSO:', error);
+                alert('Erreur de connexion SSO. Vérifiez la configuration du serveur.');
+            });
 
-                //  En cas d'erreur réseau, afficher l'option email
-                this.showEmailOption = true;
-                this.showMessage('Problème de connexion. Vous pouvez utiliser la connexion par email.', 'error');
+    } catch (error) {
+        console.error('Erreur SSO:', error);
+        alert('Erreur lors de l\'initialisation SSO.');
+    }
+}
 
-            } finally {
-                this.loading = false;
-            }
-        },
-
+function generateRandomState() {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
         async sendEmailToken() {
             if (!this.email) {
                 this.showMessage('Veuillez saisir votre email', 'warning');

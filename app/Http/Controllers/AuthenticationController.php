@@ -36,6 +36,7 @@ class AuthenticationController extends Controller
     /**
      * Initie l'authentification SSO
      */
+
    public function initiateSSO(Request $request)
 {
     try {
@@ -121,7 +122,7 @@ class AuthenticationController extends Controller
     /**
      * Gère le callback Wallix SSO
      */
-        
+
 public function handleWallixCallback(Request $request)
 {
     $url = "https://seter.trustelem.com/app/752677";
