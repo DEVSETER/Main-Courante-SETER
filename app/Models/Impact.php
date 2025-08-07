@@ -17,11 +17,11 @@ class Impact extends Model
 
 
     ];
-    public function evenements()
-    {
-        return $this->belongsToMany(Evenement::class, 'evenement_impact', 'impact_id', 'evenement_id')
-            ->withPivot('duree')
-            ->withTimestamps();
-    }
+    // public function evenements()
+    // {
+    //     return $this->belongsToMany(Evenement::class, 'evenement_impact', 'impact_id', 'evenement_id')
+    //         ->withPivot('duree')
+    //         ->withTimestamps();
+    // }
 
 }

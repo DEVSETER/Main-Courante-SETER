@@ -1,3 +1,4 @@
+
 <x-layout.default>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -583,7 +584,7 @@
                                        class="form-control"
                                        type="file"
                                        :name="field.key"
-                                        accept=".pdf,.doc,.docx,.xls,.xlsx"
+                                        accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpeg,.jpg"
                                        @change="handleFileUpload($event, field.key)">
                             </div>
 
@@ -2525,7 +2526,14 @@ saveEvent() {
         this.showError('❌ Erreur', 'La description ne peut pas être vide');
         return; // Bloquer la soumission
     }
-
+  if (!this.currentEvent.dateHeure || this.currentEvent.dateHeure.trim() === '') {
+        this.showError('❌ Erreur', 'La date ne peut pas être vide');
+        return; // Bloquer la soumission
+    }
+     if (!this.currentEvent.nature || this.currentEvent.nature.trim() === '') {
+        this.showError('❌ Erreur', 'Choisissez une nature pour cet évè,ement');
+        return; // Bloquer la soumission
+    }
     this.showInfo('🔄 Traitement', this.isEditing ? 'Mise à jour en cours...' : 'Création en cours...');
 
     if (this.currentEvent.type_action && ['demande_validation', 'aviser', 'informer'].includes(this.currentEvent.type_action)) {

@@ -278,7 +278,7 @@ public function store(Request $request)
             'entite' => 'nullable|string|max:255',
             'entite_id' => 'nullable|integer|exists:entites,id',
             'piece_jointe' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx,txt|max:10240',
-            'impact_id' => 'nullable|exists:impacts,id',
+            'impact_id' => 'nullable|integer|exists:impacts,id',
             'type_action' => 'nullable|string|in:texte_libre,demande_validation,aviser,informer',
             'message_personnalise' => 'nullable|string|max:500',
             'destinataires' => 'nullable',
@@ -298,12 +298,15 @@ public function store(Request $request)
 
         $validated = $request->validate($rules);
 
+
             Log::info('Après validation redacteur:', ['redacteur' => $validatedData['redacteur'] ?? 'NON DÉFINI']);
 
         Log::info('=== DEBUG STORE COMPLET ===');
         Log::info('Request data brutes:', ['data' => $request->all()]);
         Log::info('Type_action:', ['type_action' => $request->type_action]);
         Log::info('Destinataires bruts:', ['destinataires' => $request->destinataires]);
+        // Log::info('Impact ID reçu: ', ['impact_id' => $request->impact_id]);
+
 
         $actions = [];
         if ($request->has('actions')) {
@@ -348,7 +351,7 @@ public function store(Request $request)
             'heure_arrive_intervenant' => $validated['heure_arrive_intervenant'] ?? null,
             'entite' => Auth::check() && Auth::user()->entite ? Auth::user()->entite->code : $validated['entite'],
             'entite_id' => Auth::check() && Auth::user()->entite ? Auth::user()->entite->id : $validated['entite_id'],
-            'impact_id' => $request->impact_id ?? null,
+            'impact_id' => $validated['impact_id'] ?? null,
              'commentaire_autre_entite' => $validated['commentaire_autre_entite'],
             'avis_srcof' => $validated['avis_srcof'] ?? null, //  Nouveau champ
             'visa_encadrant' => $validated['visa_encadrant'] ?? null, //  Nouveau champ
@@ -624,11 +627,11 @@ public function store(Request $request)
             }
         }
 
-        if (!empty($validated['impact_id'])) {
-            $evenement->impacts()->sync([$validated['impact_id']]);
-            Log::info('Impact associé:', ['impact_id' => $validated['impact_id']]);
+      if (!empty($validated['impact_id']) && $validated['impact_id'] !== 'null') {
+            $evenement->impact_id = $validated['impact_id'];
+            $evenement->save();
+            Log::info('Impact assigné: ' . $validated['impact_id']);
         }
-
         //  Chargement des relations pour la réponse
         $evenement->load([
             'location',

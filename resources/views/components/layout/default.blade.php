@@ -19,27 +19,12 @@
     <script defer src="/assets/js/tippy-bundle.umd.min.js"></script>
     <script defer src="/assets/js/sweetalert.min.js"></script>
     @vite(['resources/css/app.css'])
-     <style>
-        /* Force le thème blanc au niveau HTML */
-        html, body {
-            background-color: white !important;
-            color: #1f2937 !important;
-        }
-
-        /* Supprime toute trace de dark mode */
-        .dark, [data-theme="dark"] {
-            background-color: white !important;
-            color: #1f2937 !important;
-        }
-
-        /* Force tous les éléments en blanc */
-        * {
-            color-scheme: light !important;
-        }
-    </style>
 </head>
 
-<body x-data="main" class="antialiased relative font-nunito text-sm font-normal overflow-x-hidden" :class="{ 'rtl': $store.app.isRtl }">
+<body x-data="main" class="antialiased relative font-nunito text-sm font-normal overflow-x-hidden"
+    :class="[$store.app.sidebar ? 'toggle-sidebar' : '', $store.app.theme === 'dark' || $store.app.isDarkMode ?  'dark' : '', $store.app.menu, $store.app.layout, $store.app
+        .rtlClass
+    ]">
 
     <!-- sidebar menu overlay -->
     <div x-cloak class="fixed inset-0 bg-[black]/60 z-50 lg:hidden" :class="{ 'hidden': !$store.app.sidebar }"
@@ -108,7 +93,7 @@
 
     <x-common.theme-customiser />
 
-    <div class="main-container text-black dark:text-white-dark min-h-screen" :class="[$store.app.navbar]">
+<div class="main-container min-h-screen force-white-dark" :class="[$store.app.navbar]">
 
         <x-common.sidebar />
 
@@ -128,6 +113,43 @@
     <script defer src="/assets/js/alpine-focus.min.js"></script>
     <script defer src="/assets/js/alpine.min.js"></script>
     <script src="/assets/js/custom.js"></script>
+
+    <script>
+// Forcer le thème clair au chargement si pas de préférence sauvegardée
+document.addEventListener('DOMContentLoaded', function() {
+    // Récupérer la préférence sauvegardée
+    const savedTheme = localStorage.getItem('theme');
+
+    // Si aucune préférence sauvegardée, forcer le mode clair
+    if (!savedTheme) {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+    } else if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+});
+
+// Fonction pour basculer le thème
+function toggleTheme() {
+    const isDark = document.documentElement.classList.contains('dark');
+
+    if (isDark) {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+    } else {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+    }
+}
+
+// Empêcher la détection automatique du thème navigateur
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+    // Ne rien faire - ignorer les changements automatiques
+    // Le thème est contrôlé uniquement par l'utilisateur
+});
+</script>
 </body>
 
 </html>

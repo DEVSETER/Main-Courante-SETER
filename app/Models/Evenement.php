@@ -21,6 +21,7 @@ class Evenement extends Model
         'nature_evenement_id',
         'date_evenement',
         'location_id',
+        'impact_id',
         'location_description',
         'description',
         'consequence_sur_pdt',
@@ -32,13 +33,12 @@ class Evenement extends Model
         'heure_arrive_intervenant',
         'entite',
         'entite_id',
-        'commentaire_autre_entite', 
+        'commentaire_autre_entite',
         'commentaire',
         'piece_jointe',
         'impact_id',
         'avis_srcof',
         'visa_encadrant',
-        'impact_id',
     ];
 
 

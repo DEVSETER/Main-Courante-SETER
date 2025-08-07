@@ -2,6 +2,7 @@
 
 use App\Models\User;
 
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -226,6 +227,7 @@ if (app()->environment('local')) {
 
             if ($code && str_starts_with($code, 'mock_auth_code_')) {
                 return response()->json([
+
                     'access_token' => 'mock_access_token_' . Str::random(64),
                     'token_type' => 'Bearer',
                     'expires_in' => 3600,

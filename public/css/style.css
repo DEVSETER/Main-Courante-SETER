@@ -1037,7 +1037,7 @@ tr:hover {
                 align-items: stretch;
             }
         }
-      
+
 .status-urgent {
     background: #f8d7da;
     color: #721c24;
@@ -1331,4 +1331,5 @@ td[title] {
 .action-editing .form-group {
     margin-bottom: 8px;
 }
+
 
