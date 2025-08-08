@@ -36,48 +36,72 @@ class AuthenticationController extends Controller
     /**
      * Initie l'authentification SSO
      */
-
-
+/**
+ * @param Request $request
+ * @return \Illuminate\Http\RedirectResponse
+ */
 public function initiateSSO(Request $request)
 {
     try {
-        Log::info('🚀 Tentative de connexion SSO', [
+        // Configuration Wallix
+        $baseUrl = "https://seter.trustelem.com/app/3415442";
+        $clientID = "trustelem.oidc.gm2dczbzgi";
+        $clientSecret = "liIiDgyPO8CbAzvgLLkqyp5pcpUkaDen";
+
+        // URL de redirection après authentification
+        // Utilisez celle configurée dans votre console Wallix
+        $redirectUrl = url('/connexion/sso');
+
+        // Journalisation des paramètres de base
+        Log::info('Tentative d\'authentification SSO', [
             'ip' => $request->ip(),
-            'user_agent' => $request->header('User-Agent')
+            'user_agent' => $request->header('User-Agent'),
+            'redirect_url' => $redirectUrl
         ]);
 
-        $wallixResult = $this->ssoService->attemptWallixAuth();
+        // Génération de valeurs aléatoires pour la sécurité
+        $nonce = Str::random(32);
+        $state = Str::random(32);
 
-        // ✅ CORRECTION : Toujours rediriger côté serveur pour éviter CORS
-        if ($wallixResult['success'] && isset($wallixResult['auth_url'])) {
-            Log::info('✅ Redirection vers URL Wallix', [
-                'auth_url' => $wallixResult['auth_url']
-            ]);
+        // Stockage en session pour vérification ultérieure
+        session(['oidc_nonce' => $nonce, 'oidc_state' => $state]);
 
-            // Redirection côté serveur qui évite le problème CORS
-            return redirect($wallixResult['auth_url']);
-        }
-
-        // Si pas d'URL d'auth (erreur)
-        Log::warning('❌ SSO indisponible', [
-            'error' => $wallixResult['error'] ?? 'Erreur inconnue'
+        // Construction de l'URL d'authentification avec tous les paramètres requis
+        $authUrl = $baseUrl . '/auth?' . http_build_query([
+            'response_type' => 'code',          // Type de réponse attendue
+            'client_id' => $clientID,           // Identifiant client Wallix
+            'redirect_uri' => $redirectUrl,     // URL de redirection après authentification
+            'scope' => 'openid email profile',  // Permissions demandées
+            'state' => $state,                  // Valeur de sécurité anti-CSRF
+            'nonce' => $nonce,                  // Protection contre les attaques par rejeu
+            'prompt' => 'login'                 // Force l'affichage de la page de login
         ]);
 
-        return redirect()->route('auth.login')
-            ->with('error', 'Service SSO temporairement indisponible')
-            ->with('show_email_form', true);
+        // Journalisation de l'URL générée
+        Log::info('URL d\'authentification générée', [
+            'auth_url' => $authUrl
+        ]);
+
+        // Redirection vers le service d'authentification
+        return redirect($authUrl);
 
     } catch (\Exception $e) {
-        Log::error('🔥 Erreur critique SSO', [
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
+        // Journalisation détaillée de l'erreur
+        Log::error('Erreur lors de l\'initialisation SSO', [
+            'message' => $e->getMessage(),
+            'code' => $e->getCode(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString(),
+            'ip' => $request->ip()
         ]);
 
+        // Redirection vers la page de connexion avec message d'erreur
         return redirect()->route('auth.login')
-            ->with('error', 'Erreur lors de l\'initialisation SSO');
+            ->with('error', 'Le service d\'authentification SSO est temporairement indisponible. Veuillez utiliser la connexion par email.')
+            ->with('show_email_form', true); // Afficher directement le formulaire email
     }
 }
-
     /**
      * Initie l'authentification par email
      */
@@ -142,7 +166,7 @@ public function handleWallixCallback(Request $request)
                 throw new \Exception('Wallix indisponible');
             }
         } catch (\Exception $e) {
-            Log::warning('⚠️ Wallix indisponible, fallback vers email');
+            Log::warning(' Wallix indisponible, fallback vers email');
             return redirect()->route('auth.login')
                 ->with('warning', 'Service SSO temporairement indisponible. Utilisez l\'authentification par email.')
                 ->with('show_email_form', true);
@@ -167,7 +191,7 @@ public function handleWallixCallback(Request $request)
         $firstName = $oidc->requestUserInfo('given_name');
         $lastName = $oidc->requestUserInfo('family_name');
 
-        Log::info('✅ Informations Wallix récupérées', [
+        Log::info(' Informations Wallix récupérées', [
             'email' => $email,
             'nom' => $lastName,
             'prenom' => $firstName
