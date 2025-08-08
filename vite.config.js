@@ -31,14 +31,5 @@ export default defineConfig({
         supported: {
             'top-level-await': true
         }
-    },
-    server: {
-  proxy: {
-    '/connexion/sso': {
-      target: 'https://test-main-courante.seter.sn',
-      changeOrigin: true,
-      secure: false
     }
-  }
-}
 });
