@@ -126,7 +126,7 @@ public function initiateSSO(Request $request)
 
 public function handleWallixCallback(Request $request)
 {
-    $url = "https://seter.trustelem.com/app/752677";
+    $url = "https://seter.trustelem.com/app/3415442";
     $clientID = "trustelem.oidc.gm2dczbzgi";
     $clientSecret = "liIiDgyPO8CbAzvgLLkqyp5pcpUkaDen";
 
