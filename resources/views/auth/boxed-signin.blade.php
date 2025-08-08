@@ -125,6 +125,8 @@
             class="w-full text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed text-lg"
             style="background-color: #67152e !important;">
         <span x-show="!loading" class="flex items-center justify-center">
+            <a href="connexion/sso" class="flex items-center">
+            
             🚀 Connexion
         </span>
         <span x-show="loading" class="flex items-center justify-center">
