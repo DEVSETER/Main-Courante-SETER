@@ -66,8 +66,8 @@ Route::middleware('guest')->group(function () {
   Route::match(['get', 'post'], '/connexion/sso', [AuthenticationController::class, 'initiateSSO'])
     ->name('auth.sso.initiate');
 
-    Route::get('auth/sso/callback', [AuthenticationController::class, 'handleWallixCallback'])
-         ->name('auth.sso.callback');
+    Route::get('/auth/wallix/callback', [AuthenticationController::class, 'handleWallixCallback'])
+         ->name('auth.wallix.callback');
 
     Route::post('connexion/email', [AuthenticationController::class, 'initiateEmail'])
          ->name('auth.email.initiate');
@@ -80,8 +80,6 @@ Route::middleware('guest')->group(function () {
 });
 
 
-Route::get('/auth/wallix/callback', [AuthenticationController::class, 'wallixCallback'])->name('auth.wallix.callback');
-// Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 Route::middleware(['auth'])->group(function () {
 
 // Route de déconnexion
