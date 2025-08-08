@@ -120,15 +120,16 @@
     </div>
 
     <!--  Bouton SSO principal -->
+    <a href="connexion/sso" class="flex items-center">
+
     <button @click="initiateSSO()"
             :disabled="loading"
             class="w-full text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed text-lg"
             style="background-color: #67152e !important;">
-        <span x-show="!loading" class="flex items-center justify-center">
-            <a href="connexion/sso" class="flex items-center">
-            
-            🚀 Connexion
-        </span>
+        <span x-show="!loading" class="flex items-center justify-center m-5">
+                🚀 Connexion
+            </span>
+        </a>
         <span x-show="loading" class="flex items-center justify-center">
             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
