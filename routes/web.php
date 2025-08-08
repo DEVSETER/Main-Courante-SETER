@@ -63,8 +63,12 @@ Route::middleware('guest')->group(function () {
     // Route::get('connexion/', [AuthenticationController::class, 'showLogin'])
     //      ->name('auth.login');
 
-  Route::match(['get', 'post'], '/connexion/sso', [AuthenticationController::class, 'initiateSSO'])
+  Route::get('/connexion/sso', [AuthenticationController::class, 'initiateSSO'])
     ->name('auth.sso.initiate');
+
+
+//   Route::post('connexion/sso', [AuthenticationController::class, 'initiateSSO'])
+//     ->name('auth.sso.initiate');
 
     Route::get('/auth/wallix/callback', [AuthenticationController::class, 'handleWallixCallback'])
          ->name('auth.wallix.callback');
@@ -240,14 +244,13 @@ if (app()->environment('local')) {
     });
 }
 
-Route::get('/health-check', function () {
+Route::get('/test-sso-callback', function (Request $request) {
     return response()->json([
-        'status' => 'ok',
-        'timestamp' => now(),
-        'app_url' => config('app.url'),
-        'environment' => app()->environment()
+        'message' => 'Route de callback accessible',
+        'query_params' => $request->all(),
+        'session' => [
+            'has_oidc_state' => session()->has('oidc_state'),
+            'has_oidc_nonce' => session()->has('oidc_nonce')
+        ]
     ]);
 });
-
-
-

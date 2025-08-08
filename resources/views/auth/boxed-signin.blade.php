@@ -120,7 +120,7 @@
     </div>
 
     <!--  Bouton SSO principal -->
-    <a href="connexion/sso" class="flex items-center">
+    {{-- <a href="connexion/sso" class="flex items-center"> --}}
 
     <button @click="initiateSSO()"
             :disabled="loading"
@@ -129,7 +129,7 @@
         <span x-show="!loading" class="flex items-center justify-center m-5">
                 🚀 Connexion
             </span>
-        </a>
+        {{-- </a> --}}
         <span x-show="loading" class="flex items-center justify-center">
             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -231,66 +231,21 @@ document.addEventListener('alpine:init', () => {
         showEmailOption: false,
         email: '',
         tokenExpiry: 0,
-
-        async initiateSSO() {
+async initiateSSO() {
     console.log('🚀 Début initiateSSO');
     this.loading = true;
     this.showEmailOption = false;
 
     try {
-        const response = await fetch('/connexion/sso', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            redirect: 'follow',
-            body: JSON.stringify({ sso_only: true })
-        });
+        // Redirection directe vers la route de SSO
+        window.location.href = '/connexion/sso';
 
-        console.log('📡 Response status:', response.status);
-
-        // Si le serveur retourne un json (pas de redirection)
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            const result = await response.json();
-            console.log('📥 Result JSON:', result);
-
-            if (result.success && result.redirect_url) {
-                // Si le serveur nous donne une URL, rediriger manuellement
-                console.log('🔄 Redirection vers:', result.redirect_url);
-                window.location.href = result.redirect_url;
-                return; // Arrêter l'exécution
-            } else if (result.success && result.method === 'wallix_sso') {
-                // Déjà en cours de redirection
-                this.showMessage('Redirection vers Wallix...', 'info');
-                return; // Arrêter l'exécution
-            } else {
-                // Erreur ou SSO non disponible
-                this.showEmailOption = true;
-                this.showMessage(result.error || 'SSO non disponible. Utilisez la connexion par email.', 'warning');
-            }
-        } else if (response.redirected) {
-            // Si la réponse a été redirigée, suivre la redirection
-            console.log('🔄 Redirection automatique vers:', response.url);
-            window.location.href = response.url;
-            return; // Arrêter l'exécution
-        } else if (!response.ok) {
-            // Erreur HTTP
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        // Cette partie ne sera jamais exécutée à cause de la redirection
+        return;
     } catch (error) {
         console.error('❌ Erreur SSO:', error);
-
         this.showEmailOption = true;
-
-        if (error.message.includes('404')) {
-            this.showMessage('Service d\'authentification non trouvé. Utilisez la connexion par email.', 'error');
-        } else if (error.message.includes('CORS')) {
-            this.showMessage('Problème de connexion au service d\'authentification. Utilisez la connexion par email.', 'error');
-        } else {
-            this.showMessage('Problème de connexion. Vous pouvez utiliser la connexion par email.', 'error');
-        }
+        this.showMessage('Problème de connexion. Vous pouvez utiliser la connexion par email.', 'error');
     } finally {
         this.loading = false;
     }

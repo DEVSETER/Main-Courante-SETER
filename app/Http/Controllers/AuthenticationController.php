@@ -65,6 +65,8 @@ public function initiateSSO(Request $request)
 
         // Stockage en session pour vérification ultérieure
         session(['oidc_nonce' => $nonce, 'oidc_state' => $state]);
+            session()->save();
+
 
         // Construction de l'URL d'authentification avec tous les paramètres requis
         $authUrl = $baseUrl . '/auth?' . http_build_query([
@@ -147,132 +149,129 @@ public function initiateSSO(Request $request)
     /**
      * Gère le callback Wallix SSO
      */
-
+    /**
+ * @param Request $request
+ * @return \Illuminate\Http\RedirectResponse
+ */
 public function handleWallixCallback(Request $request)
 {
-    $url = "https://seter.trustelem.com/app/3415442";
-    $clientID = "trustelem.oidc.gm2dczbzgi";
-    $clientSecret = "liIiDgyPO8CbAzvgLLkqyp5pcpUkaDen";
-
     try {
-        Log::info('🔄 Callback Wallix reçu', [
-            'request_params' => $request->all()
+        // Journalisation de la requête de callback
+        Log::info('Callback SSO reçu', [
+            'params' => $request->all(),
+            'has_code' => $request->has('code'),
+            'has_state' => $request->has('state')
         ]);
 
-        // 1. Vérifier la disponibilité de Wallix
-        try {
-            $healthCheck = Http::timeout(5)->get($url . '/.well-known/openid_configuration');
-            if (!$healthCheck->successful()) {
-                throw new \Exception('Wallix indisponible');
-            }
-        } catch (\Exception $e) {
-            Log::warning(' Wallix indisponible, fallback vers email');
-            return redirect()->route('auth.login')
-                ->with('warning', 'Service SSO temporairement indisponible. Utilisez l\'authentification par email.')
-                ->with('show_email_form', true);
+        // Vérifier la présence du code d'autorisation
+        if (!$request->has('code')) {
+            Log::warning('Callback sans code d\'autorisation', [
+                'params' => $request->all()
+            ]);
+            throw new \Exception('Code d\'autorisation manquant');
         }
 
-        // 2. Initialiser OpenIDConnect
-        $oidc = new OpenIDConnectClient($url, $clientID, $clientSecret);
-        $oidc->setRedirectURL(route('auth.wallix.callback'));
-
-        // 3. Authentifier avec Wallix
-        $authenticated = $oidc->authenticate();
-
-        if (!$authenticated) {
-            Log::error('❌ Échec authentification Wallix');
-            return redirect()->route('auth.login')
-                ->with('error', 'Échec de l\'authentification SSO')
-                ->with('show_email_form', true);
+        // Vérifier le state pour prévenir les attaques CSRF
+        if (!$request->has('state') || $request->state !== session('oidc_state')) {
+            Log::warning('Validation du state échouée', [
+                'received' => $request->state ?? 'null',
+                'expected' => session('oidc_state') ?? 'null'
+            ]);
+            throw new \Exception('État de session invalide');
         }
 
-        // 4. Récupérer les informations utilisateur
-        $email = $oidc->requestUserInfo('email');
-        $firstName = $oidc->requestUserInfo('given_name');
-        $lastName = $oidc->requestUserInfo('family_name');
+        // Configuration Wallix
+        $baseUrl = "https://seter.trustelem.com/app/752677";
+        $clientID = "trustelem.oidc.gm2dczbzgi";
+        $clientSecret = "liIiDgyPO8CbAzvgLLkqyp5pcpUkaDen";
+        $redirectUrl = url('/connexion/sso');
 
-        Log::info(' Informations Wallix récupérées', [
-            'email' => $email,
-            'nom' => $lastName,
-            'prenom' => $firstName
+        // Échange du code contre un token
+        $response = Http::asForm()->post($baseUrl . '/token', [
+            'grant_type' => 'authorization_code',
+            'code' => $request->code,
+            'redirect_uri' => $redirectUrl,
+            'client_id' => $clientID,
+            'client_secret' => $clientSecret
         ]);
+
+        if (!$response->successful()) {
+            Log::error('Échec échange code contre token', [
+                'status' => $response->status(),
+                'body' => $response->body()
+            ]);
+            throw new \Exception('Échec de récupération du token: ' . $response->status());
+        }
+
+        $tokenData = $response->json();
+
+        // Vérifier la présence de l'ID token
+        if (!isset($tokenData['id_token'])) {
+            Log::error('ID token manquant dans la réponse', [
+                'response' => $tokenData
+            ]);
+            throw new \Exception('ID token manquant dans la réponse');
+        }
+
+        // Récupérer les informations utilisateur
+        $idToken = $tokenData['id_token'];
+        $parts = explode('.', $idToken);
+        $payload = json_decode(base64_decode($parts[1]), true);
+
+        $email = $payload['email'] ?? null;
 
         if (!$email) {
-            throw new \Exception('Email non trouvé dans la réponse Wallix');
+            Log::error('Email manquant dans l\'ID token', [
+                'payload' => $payload
+            ]);
+            throw new \Exception('Email non fourni');
         }
 
-        // 5. Chercher l'utilisateur dans la base
+        Log::info('Utilisateur authentifié via SSO', ['email' => $email]);
+
+        // Recherche de l'utilisateur dans la base de données
         $user = User::where('email', $email)->first();
 
         if (!$user) {
-            Log::warning('⚠️ Utilisateur non trouvé en base', ['email' => $email]);
-
-            // Fallback: Générer un token temporaire et envoyer par email
-            $tempToken = Str::random(64);
-            cache()->put("temp_wallix_token_{$tempToken}", [
-                'email' => $email,
-                'nom' => $lastName,
-                'prenom' => $firstName,
-                'expires_at' => now()->addHour()
-            ], 3600);
-
-            // Simuler l'envoi d'email (à adapter selon votre système)
-            Log::info('📧 Token temporaire généré pour utilisateur inconnu', [
-                'email' => $email,
-                'token' => substr($tempToken, 0, 8) . '...'
+            Log::warning('Tentative de connexion avec un email non enregistré', [
+                'email' => $email
             ]);
-
             return redirect()->route('auth.login')
-                ->with('success', 'Un email de connexion a été envoyé à votre adresse.')
-                ->with('info', 'Vérifiez votre boîte mail et cliquez sur le lien de connexion.')
-                ->with('email', $email)
-                ->with('fallback_method', 'wallix_to_email');
+                ->with('error', 'Vous n\'êtes pas autorisé à accéder à cette application');
         }
 
-        // 6. Mettre à jour les informations utilisateur si nécessaire
-        $updateData = [];
-        if ($firstName && $firstName !== $user->prenom) {
-            $updateData['prenom'] = $firstName;
-        }
-        if ($lastName && $lastName !== $user->nom) {
-            $updateData['nom'] = $lastName;
-        }
+        // Connecter l'utilisateur
+        Auth::login($user);
 
-        if (!empty($updateData)) {
-            $user->update($updateData);
-            Log::info('📝 Informations utilisateur mises à jour depuis Wallix', $updateData);
-        }
+        // Nettoyer les données de session
+        session()->forget(['oidc_state', 'oidc_nonce']);
 
-        // 7. Connecter l'utilisateur directement
-        Auth::login($user, true);
-
-        // 8. Génération token API
-        $token = $user->createToken('wallix_sso_' . Str::random(10))->plainTextToken;
-
-        Log::info('✅ Authentification Wallix réussie', [
+        Log::info('Connexion SSO réussie', [
             'user_id' => $user->id,
-            'email' => $user->email,
-            'method' => 'wallix_sso'
+            'email' => $user->email
         ]);
 
-        // 9. Marquer la méthode d'authentification
-        session(['auth_method' => 'wallix_sso']);
-
-        return $this->handleSuccessfulLogin($request, $user, $token, 'wallix_sso');
+        // Rediriger vers la page d'accueil
+        return redirect()->route('evenements.index')
+            ->with('success', 'Connexion réussie');
 
     } catch (\Exception $e) {
-        Log::error('❌ Erreur callback Wallix', [
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-            'request_data' => $request->all()
+        // Journalisation détaillée de l'erreur
+        Log::error('Erreur lors du traitement du callback SSO', [
+            'message' => $e->getMessage(),
+            'code' => $e->getCode(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString()
         ]);
 
-        // Fallback automatique vers authentification email
+        // Nettoyer les données de session
+        session()->forget(['oidc_state', 'oidc_nonce']);
+
+        // Rediriger vers la page de connexion avec message d'erreur
         return redirect()->route('auth.login')
-            ->with('error', 'Erreur SSO: ' . $e->getMessage())
-            ->with('warning', 'Vous pouvez utiliser l\'authentification par email en attendant.')
-            ->with('show_email_form', true)
-            ->with('fallback_reason', $e->getMessage());
+            ->with('error', 'Erreur lors de l\'authentification SSO: ' . $e->getMessage())
+            ->with('show_email_form', true);
     }
 }
 
