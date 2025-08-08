@@ -56,24 +56,26 @@ Route::get('/admin/system/status', function () {
     }
 })->name('admin.system.status');
 
+Route::middleware('guest')->group(function () {
+    Route::get('/connexion', [AuthenticationController::class, 'showLogin'])->name('auth.login');
 
-Route::prefix('connexion')->group(function () {
-    Route::get('/', [AuthenticationController::class, 'showLogin'])
-         ->name('auth.login');
+// Route::prefix('connexion')->group(function () {
+    // Route::get('connexion/', [AuthenticationController::class, 'showLogin'])
+    //      ->name('auth.login');
 
-    Route::post('/sso', [AuthenticationController::class, 'initiateSSO'])
-         ->name('auth.sso.initiate');
+  Route::match(['get', 'post'], '/connexion/sso', [AuthenticationController::class, 'initiateSSO'])
+    ->name('auth.sso.initiate');
 
-    Route::get('/sso/callback', [AuthenticationController::class, 'handleWallixCallback'])
+    Route::get('auth/sso/callback', [AuthenticationController::class, 'handleWallixCallback'])
          ->name('auth.sso.callback');
 
-    Route::post('/email', [AuthenticationController::class, 'initiateEmail'])
+    Route::post('connexion/email', [AuthenticationController::class, 'initiateEmail'])
          ->name('auth.email.initiate');
 
-    Route::post('/email/resend', [AuthenticationController::class, 'resendEmailToken'])
+    Route::post('connexion/email/resend', [AuthenticationController::class, 'resendEmailToken'])
          ->name('auth.email.resend');
 
-    Route::get('/email/verify/{token}', [AuthenticationController::class, 'verifyEmailToken'])
+    Route::get('connexion/email/verify/{token}', [AuthenticationController::class, 'verifyEmailToken'])
          ->name('auth.email.verify');
 });
 

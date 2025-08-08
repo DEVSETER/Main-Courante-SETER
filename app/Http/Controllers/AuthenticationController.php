@@ -37,26 +37,28 @@ class AuthenticationController extends Controller
      * Initie l'authentification SSO
      */
 
-   public function initiateSSO(Request $request)
+
+public function initiateSSO(Request $request)
 {
     try {
-        Log::info('🚀 Tentative de connexion SSO');
+        Log::info('🚀 Tentative de connexion SSO', [
+            'ip' => $request->ip(),
+            'user_agent' => $request->header('User-Agent')
+        ]);
 
         $wallixResult = $this->ssoService->attemptWallixAuth();
 
+        // ✅ CORRECTION : Toujours rediriger côté serveur pour éviter CORS
         if ($wallixResult['success'] && isset($wallixResult['auth_url'])) {
-            // Si on a une URL d'autorisation, rediriger directement
+            Log::info('✅ Redirection vers URL Wallix', [
+                'auth_url' => $wallixResult['auth_url']
+            ]);
+
+            // Redirection côté serveur qui évite le problème CORS
             return redirect($wallixResult['auth_url']);
         }
 
-        if ($wallixResult['success']) {
-            return response()->json([
-                'success' => true,
-                'method' => 'wallix_sso',
-                'message' => 'Redirection vers Wallix...'
-            ]);
-        }
-
+        // Si pas d'URL d'auth (erreur)
         Log::warning('❌ SSO indisponible', [
             'error' => $wallixResult['error'] ?? 'Erreur inconnue'
         ]);
@@ -75,7 +77,6 @@ class AuthenticationController extends Controller
             ->with('error', 'Erreur lors de l\'initialisation SSO');
     }
 }
-
 
     /**
      * Initie l'authentification par email

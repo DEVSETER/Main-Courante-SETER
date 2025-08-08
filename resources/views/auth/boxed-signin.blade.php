@@ -230,59 +230,68 @@ document.addEventListener('alpine:init', () => {
         tokenExpiry: 0,
 
         async initiateSSO() {
-            console.log('🚀 Début initiateSSO');
-            this.loading = true;
-            this.showEmailOption = false;
+    console.log('🚀 Début initiateSSO');
+    this.loading = true;
+    this.showEmailOption = false;
 
-            try {
-                const response = await fetch('/connexion/sso', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify({ sso_only: true })
-                });
+    try {
+        const response = await fetch('/connexion/sso', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            redirect: 'follow',
+            body: JSON.stringify({ sso_only: true })
+        });
 
-                console.log('📡 Response status:', response.status);
+        console.log('📡 Response status:', response.status);
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+        // Si le serveur retourne un json (pas de redirection)
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const result = await response.json();
+            console.log('📥 Result JSON:', result);
 
-                const result = await response.json();
-                console.log('📥 Result:', result);
-
-                if (result.success) {
-                    if (result.method === 'wallix_sso') {
-                        this.showMessage('Redirection vers Wallix...', 'info');
-                        // La redirection se fait automatiquement
-                    } else {
-                        //  Si pas de SSO disponible, proposer directement l'email
-                        this.showEmailOption = true;
-                        this.showMessage('SSO non disponible. Utilisez la connexion par email.', 'warning');
-                    }
-                } else {
-                    //  En cas d'échec, afficher l'option email
-                    this.showEmailOption = true;
-
-                    if (result.error && (result.error.includes('unavailable') || result.error.includes('indisponible'))) {
-                        this.showMessage('Service d\'authentification temporairement indisponible.', 'warning');
-                    } else {
-                        this.showMessage('Erreur de connexion. Vous pouvez utiliser la connexion par email.', 'error');
-                    }
-                }
-            } catch (error) {
-                console.error('❌ Erreur SSO:', error);
-
-                //  En cas d'erreur réseau, afficher l'option email
+            if (result.success && result.redirect_url) {
+                // Si le serveur nous donne une URL, rediriger manuellement
+                console.log('🔄 Redirection vers:', result.redirect_url);
+                window.location.href = result.redirect_url;
+                return; // Arrêter l'exécution
+            } else if (result.success && result.method === 'wallix_sso') {
+                // Déjà en cours de redirection
+                this.showMessage('Redirection vers Wallix...', 'info');
+                return; // Arrêter l'exécution
+            } else {
+                // Erreur ou SSO non disponible
                 this.showEmailOption = true;
-                this.showMessage('Problème de connexion. Vous pouvez utiliser la connexion par email.', 'error');
-
-            } finally {
-                this.loading = false;
+                this.showMessage(result.error || 'SSO non disponible. Utilisez la connexion par email.', 'warning');
             }
-        },
+        } else if (response.redirected) {
+            // Si la réponse a été redirigée, suivre la redirection
+            console.log('🔄 Redirection automatique vers:', response.url);
+            window.location.href = response.url;
+            return; // Arrêter l'exécution
+        } else if (!response.ok) {
+            // Erreur HTTP
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+    } catch (error) {
+        console.error('❌ Erreur SSO:', error);
+
+        this.showEmailOption = true;
+
+        if (error.message.includes('404')) {
+            this.showMessage('Service d\'authentification non trouvé. Utilisez la connexion par email.', 'error');
+        } else if (error.message.includes('CORS')) {
+            this.showMessage('Problème de connexion au service d\'authentification. Utilisez la connexion par email.', 'error');
+        } else {
+            this.showMessage('Problème de connexion. Vous pouvez utiliser la connexion par email.', 'error');
+        }
+    } finally {
+        this.loading = false;
+    }
+},
 
         async sendEmailToken() {
             if (!this.email) {
