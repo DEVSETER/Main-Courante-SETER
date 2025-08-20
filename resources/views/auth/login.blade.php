@@ -229,7 +229,7 @@
 document.addEventListener('alpine:init', () => {
     Alpine.data('ssoAuth', () => ({
         loading: false,
-        showEmailForm: false,
+        showEmailForm: true,
         showTokenSent: false,
         showEmailOption: false,
         email: '',
@@ -384,7 +384,7 @@ document.addEventListener('alpine:init', () => {
         },
 
         resetForm() {
-            this.showEmailForm = false;
+            this.showEmailForm = true;
             this.showTokenSent = false;
             this.showEmailOption = false; //  NOUVEAU : Réinitialiser l'option email
             this.email = '';

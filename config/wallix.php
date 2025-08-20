@@ -5,7 +5,6 @@ return [
     'client_id' => 'trustelem.oidc.gm2dczbzgi',
     'client_secret' => 'liIiDgyPO8CbAzvgLLkqyp5pcpUkaDen',
 
-    // CORRECTION: Utiliser HTTPS pour l'URL de callback
     'redirect_uri' => 'https://test-main-courante.seter.sn/auth/wallix/callback',
 
     // URLs correctes

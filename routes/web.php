@@ -66,9 +66,14 @@ Route::middleware('guest')->group(function () {
   Route::get('/connexion/sso', [AuthenticationController::class, 'initiateSSO'])
     ->name('auth.sso.initiate');
 
+    // Route::get('/connexion/sso/callback', [AuthenticationController::class, 'handleWallixCallback'])
+    //  ->name('auth.sso.callback');
 
-//   Route::post('connexion/sso', [AuthenticationController::class, 'initiateSSO'])
-//     ->name('auth.sso.initiate');
+Route::get('initiate/connexion', [AuthenticationController::class, 'loginForm'])
+    ->name('auth.loginForm');
+    
+  Route::post('initiate/connexion', [AuthenticationController::class, 'login'])
+    ->name('auth.login');
 
     Route::get('/auth/wallix/callback', [AuthenticationController::class, 'handleWallixCallback'])
          ->name('auth.wallix.callback');
