@@ -71,9 +71,9 @@ Route::middleware('guest')->group(function () {
 
 Route::get('initiate/connexion', [AuthenticationController::class, 'loginForm'])
     ->name('auth.loginForm');
-    
+
   Route::post('initiate/connexion', [AuthenticationController::class, 'login'])
-    ->name('auth.login');
+    ->name('auth.loginsso');
 
     Route::get('/auth/wallix/callback', [AuthenticationController::class, 'handleWallixCallback'])
          ->name('auth.wallix.callback');
