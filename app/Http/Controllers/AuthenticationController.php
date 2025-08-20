@@ -48,7 +48,7 @@ public function login(Request $request)
 
     // Recherche de l'utilisateur actif
     $user = User::where('email', $request->email)
-        ->where('status', true)
+        // ->where('status', true)
         ->first();
 
     // Vérification des droits d'accès
@@ -95,7 +95,7 @@ public function login(Request $request)
 
         $email = $oidc->requestUserInfo('email');
 
-        $User = User::where(['email' => $email, 'status' => true])->first();
+        $User = User::where(['email' => $email])->first();
         if ($User != null && ($User->entite->code == 'SR COF' || $User->entite->code == 'PTP'|| $User->entite->code == 'CIV'|| $User->entite->code == 'HC'
                 || $User->entite->code == 'CM' )){
             $user = User::where(['id' => $User->id])->first();
