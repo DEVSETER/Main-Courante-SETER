@@ -44,7 +44,7 @@
 
         <!-- Navigation des types de main courante -->
         <div class="nav-buttons">
-    @if(auth()->user()->entite->code === 'PTP' || auth()->user()->entite->code === 'SR COF')
+    @if(auth()->user()->entite->code === 'PTP' || auth()->user()->entite->code === 'SR COF'  || auth()->user()->entite->code === 'DSI')
         <button class="nav-btn"
                 :class="{ 'active': activeTab === 'SRCOF' }"
                 @click="switchTab('SRCOF')">
@@ -54,7 +54,7 @@
 
     @endif
 
-    @if(auth()->user()->entite->code === 'CIV' || auth()->user()->entite->code === 'SR COF')
+    @if(auth()->user()->entite->code === 'CIV' || auth()->user()->entite->code === 'SR COF' || auth()->user()->entite->code === 'DSI')
         <button class="nav-btn"
                 :class="{ 'active': activeTab === 'CIV' }"
                 @click="switchTab('CIV')">
@@ -62,7 +62,7 @@
         </button>
     @endif
 
-    @if(auth()->user()->entite->code === 'HC' || auth()->user()->entite->code === 'SR COF')
+    @if(auth()->user()->entite->code === 'HC' || auth()->user()->entite->code === 'SR COF' || auth()->user()->entite->code === 'DSI')
         <button class="nav-btn"
                 :class="{ 'active': activeTab === 'HOTLINE' }"
                 @click="switchTab('HOTLINE')">
@@ -70,7 +70,7 @@
         </button>
     @endif
 
-    @if(auth()->user()->entite->code === 'CM' || auth()->user()->entite->code === 'SR COF')
+    @if(auth()->user()->entite->code === 'CM' || auth()->user()->entite->code === 'SR COF' || auth()->user()->entite->code === 'DSI')
         <button class="nav-btn"
                 :class="{ 'active': activeTab === 'CM' }"
                 @click="switchTab('CM')">
@@ -78,7 +78,7 @@
         </button>
     @endif
 
-    @if(auth()->user()->entite->code === 'PTP' || auth()->user()->entite->code === 'SR COF')
+    @if(auth()->user()->entite->code === 'PTP' || auth()->user()->entite->code === 'SR COF' || auth()->user()->entite->code === 'DSI')
         <button class="nav-btn"
                 :class="{ 'active': activeTab === 'PTP' }"
                 @click="switchTab('PTP')">
@@ -88,14 +88,21 @@
 </div>
         <!-- Contrôles -->
         <div class="controls">
+
             <div style="display: flex;flex-direction: column; justify-content: space-between; align-items: center;border: 1px solid #ccc; padding: 3px; border-radius: 5px;">
+                @can('Créer événement')
+
                 <button class="btn btn-primary" @click="openCreateModal()" >
                     ➕ Créer un événement
+                    @endcan
                 </button>
+                @can('Modifier événement')
+
                 <button class="bg-yellow-100 text-yellow-800 hover:bg-yellow-200 hover:text-yellow-900 px-3 py-1 rounded-full text-sm soft-yellow-btn" @click="toggleEditMode()"
-                        :class="{ 'btn-danger': editMode }" style="margin-top: 10px">
-                    <span x-text="editMode ? '❌ Désactiver édition' : '✏️ Activer mode édition'"></span>
-                </button>
+                :class="{ 'btn-danger': editMode }" style="margin-top: 10px">
+                <span x-text="editMode ? '❌ Désactiver édition' : '✏️ Activer mode édition'"></span>
+            </button>
+            @endcan
             </div>
             <div>
                 <span x-text="`${getCurrentData().length} événements`" class="text-muted"></span>
@@ -198,12 +205,12 @@
                                      <span x-show="column !== 'Statut' && column !== 'POST' && column !== 'Rédacteur' && column !== 'Opérations' && column !== 'Commentaire' && column !== 'Action' && column !== 'Visa encadrant'"
                                     :class="column === 'Date et heure' ? 'date-cell' : ''"
                                     x-text="item[getColumnKey(column)]"></span>
-
-                                    <span x-show="column === 'Visa encadrant'"
-      class="visa-encadrant-badge"
-      x-text="item[getColumnKey(column)] || ''"
-      :class="item[getColumnKey(column)] ? 'text-green-700 bg-green-100' : 'text-gray-500 bg-gray-100'"
-      style="padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; display: inline-block;"></span>
+                                <span x-show="column === 'Visa encadrant'"
+                                    class="visa-encadrant-badge"
+                                    x-text="item[getColumnKey(column)] ? item[getColumnKey(column)] : 'Non renseigné'"
+                                    :class="item[getColumnKey(column)] ? 'text-green-700 bg-green-100' : 'text-gray-500 bg-gray-100'"
+                                    style="padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; display: inline-block;">
+                                </span>
 
 
                             <span x-show="column === 'Commentaire'"

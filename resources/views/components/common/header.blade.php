@@ -271,7 +271,7 @@
             </span>
     </a>
     <ul x-cloak x-show="open" x-transition x-transition.duration.300ms
-        class="ltr:right-0 rtl:left-0 text-dark dark:text-white-dark top-11 !py-0 w-[230px] font-semibold dark:text-white-light/90">
+        class="ltr:right-0 rtl:left-0 text-dark dark:text-white-dark top-11 !py-0 w-[280px] font-semibold dark:text-white-light/90">
 
         <!-- Profil utilisateur -->
         <li>
@@ -281,10 +281,10 @@
                         src="/assets/images/user-profile.png" alt="image" />
                 </div>
                 <div class="ltr:pl-4 rtl:pr-4 truncate">
-                    <h4 class="text-base"> {{ Auth::user()->nom}}
-                        <span class="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Actif</span>
+                    <h4 class="text-base"> {{ Auth::user()->prenom}} {{ Auth::user()->nom}}
+                        <span class="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2" style=" background-color: #DDF5F0; color:#00AB55 ;">Actif</span>
                     </h4>
-                    <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white"
+                    <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white" style="margin-left: -1rem"
                         href="javascript:;">{{ Auth::user()->email }}</a>
                 </div>
             </div>
@@ -318,12 +318,10 @@
             </a>
         </li>
 
-        <!-- ✅ Séparateur -->
         <li>
             <div class="border-t border-white-light dark:border-white/10 my-2"></div>
         </li>
 
-        <!-- ✅ DÉCONNEXION - Aligné correctement -->
         <li>
             <form method="POST" action="{{ route('auth.logout') }}">
                 @csrf

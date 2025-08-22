@@ -26,7 +26,7 @@
     <span class="font-semibold text-lg" style="color: #67152e;">LISTE DES PRIVILEGES</span>
 </div>
 
-            <!-- Bouton aligné à droite -->
+            {{-- <!-- Bouton aligné à droite -->
             <button  class="btn btn-primary flex items-center" style="background-color: #67152e; border-color: #67152e; color: #fff;">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                     xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2">
@@ -38,7 +38,7 @@
                         stroke-width="1.5" stroke-linecap="round" />
                 </svg>
                 <a href="/permissions">Ajouter privilège</a>
-            </button>
+            </button> --}}
         </div>
         <div class="panel">
             <h5 class="md:absolute md:top-[25px] md:mb-0 mb-5 font-semibold text-lg dark:text-white-light">Privilège</h5>

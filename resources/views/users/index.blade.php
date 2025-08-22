@@ -25,6 +25,8 @@
                 <span class="font-semibold text-lg font-bold" style="color: #67152e; font-weight: bold;">LISTE DES UTILISATEURS</span>
             </div>
 
+            @can('Créer utilisateur')
+
 
             <button class="btn btn-primary ml-auto flex items-center" style="background-color: #67152e; border-color: #67152e; color: #fff;">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2">
@@ -36,6 +38,7 @@
                 <a href="{{ route('users.creation') }}" class="text-white">Ajouter un utilisateur</a>
 
             </button>
+            @endcan
         </div>
 
         <div class="panel">
