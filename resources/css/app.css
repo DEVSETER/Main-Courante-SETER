@@ -728,3 +728,9 @@ hover:text-[#4361ee] hover:before:!bg-[#4361ee] ltr:before:mr-2 rtl:before:ml-2 
 [dir='rtl'] .apexcharts-tooltip-marker {
     @apply mr-0 ml-2.5;
 }
+
+.dark, .dark * {
+    color-scheme: light !important;
+    background: unset !important;
+    color: unset !important;
+}

@@ -147,7 +147,7 @@
 
     /* Style du cercle d'icône */
     :root:not(.dark) .icon-circle {
-        background-color: rgba(255, 255, 255, 0.15) !important;
+        /* background-color: rgba(255, 255, 255, 0.15) !important; */
     }
 </style>
 
@@ -745,7 +745,6 @@
                 }
             }
         },
-        // ✅ Désactiver les états qui modifient les couleurs
         states: {
             normal: {
                 filter: {
@@ -769,7 +768,7 @@
         },
         tooltip: {
             enabled: true,
-            theme: isDark ? 'dark' : 'light',
+            theme: isDark ? 'light' : 'light',
             style: {
                 fontSize: '14px',
                 fontFamily: 'Nunito, sans-serif'

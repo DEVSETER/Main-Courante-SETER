@@ -17,20 +17,20 @@ body {
 * {
     color: inherit;
 }
-.dark {
+/* .dark {
     color-scheme: dark;
-}
+} */
 
 /* ===== MODE SOMBRE GLOBAL ===== */
-.dark body {
+/* .dark body {
     background: linear-gradient(135deg, #1a202c 0%, #2d3748 50%, #1a202c 100%);
-}
+} */
 
 
-.dark {
+/* .dark {
     color: #888EA8 !important;
-}
-
+} */
+/*
 .dark * {
     color: #888EA8 !important;
 }
@@ -41,13 +41,13 @@ body {
 
     body:not(.dark) {
         color: #333333 !important;
-        background: url('{{ asset("assets/images/auth/map.png") }}') !important;
-    }
+        /* background: url('{{ asset("assets/images/auth/map.png") }}') !important; */
+    /* } */
 
-    *:not(.dark *) {
-        color: inherit !important;
-    }
-}
+    /* *:not(.dark *) { */
+        /* color: inherit !important; */
+    /* } */
+/* } */ */
 
 /* ===== RESTE DU CSS EXISTANT ===== */
 * {
@@ -61,13 +61,13 @@ body {
 /* .dark * { color: #888EA8 !important; } */
 
 /* Remplacer par : */
-.dark {
+/* .dark {
     color: #888EA8 !important;
 }
 
 .dark * {
     color: #888EA8 !important;
-}
+} */
 
 /* ... reste de votre CSS ... */
 /* ===== DESTINATAIRES ===== */
@@ -80,10 +80,10 @@ body {
     transition: all 0.3s ease;
 }
 
-.dark .destinataires-list {
+/* .dark .destinataires-list {
     background: #374151;
     border-color: #4b5563;
-}
+} */
 
 .destinataire-item {
     padding: 12px;
@@ -93,11 +93,11 @@ body {
     background: white;
 }
 
-.dark .destinataire-item {
+/* .dark .destinataire-item {
     background: #1f2937;
     border-bottom-color: #374151;
     color: #888EA8;
-}
+} */
 
 .colonne-principale {
     min-height: 500px;
@@ -114,10 +114,10 @@ body {
     transition: all 0.3s ease;
 }
 
-.dark .colonne-actions {
+/* .dark .colonne-actions {
     background: #374151;
     border: 1px solid #4b5563;
-}
+} */
 
 .colonne-actions .form-group {
     margin-bottom: 15px;
@@ -127,11 +127,11 @@ body {
     font-size: 12px;
 }
 
-.dark .colonne-actions .form-control {
+/* .dark .colonne-actions .form-control {
     background: #1f2937;
     border-color: #4b5563;
     color: #ffffff;
-}
+} */
 
 .colonne-actions .info-banner {
     font-size: 11px;
@@ -150,10 +150,10 @@ body {
     font-size: 11px;
 }
 
-.dark .colonne-actions .existing-items .bg-white {
+/* .dark .colonne-actions .existing-items .bg-white {
     background: #1f2937 !important;
     color: #ffffff !important;
-}
+} */
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
@@ -1856,3 +1856,4 @@ td[data-label="Date et heure"] {
     background-color: #60a5fa;
     color: #1f2937 !important;
 }
+

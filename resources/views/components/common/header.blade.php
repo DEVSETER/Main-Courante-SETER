@@ -182,7 +182,7 @@
                         </svg>
                     </button>
                 </div>
-                <div>
+                {{-- <div>
                     <a href="javascript:;" x-cloak x-show="$store.app.theme === 'light'" href="javascript:;"
                         class="flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
                         @click="$store.app.toggleTheme('dark')">
@@ -207,7 +207,7 @@
                     </a>
                     <a href="javascript:;" x-cloak x-show="$store.app.theme === 'dark'" href="javascript:;"
                         class="flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
-                        @click="$store.app.toggleTheme('system')">
+                        @click="$store.app.toggleTheme('light')">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -229,7 +229,7 @@
                                 stroke-linecap="round" />
                         </svg>
                     </a>
-                </div>
+                </div> --}}
 
                 {{-- <div class="dropdown shrink-0" x-data="dropdown" @click.outside="open = false">
                     <a href="javascript:;"

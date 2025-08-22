@@ -154,7 +154,7 @@
         <!-- Tableau dynamique -->
         <div class="table-container">
             <table>
-                <thead>
+                <thead style="color:#888EA8 !important">
                     <tr>
                         <th x-show="editMode">✓</th>
                         <template x-for="column in getCurrentColumns()">
