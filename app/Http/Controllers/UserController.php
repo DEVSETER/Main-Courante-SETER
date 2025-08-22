@@ -184,7 +184,7 @@ public function update(Request $request, $id)
     $user->update($data);
 
         // Mail::to($user->email)->send(new DemandeMail($user));
-        Mail::to($user->email)->queue(new DemandeMail($user));
+        // Mail::to($user->email)->queue(new DemandeMail($user));
     return redirect()->route('users.index')->with('success', 'Utilisateur mis à jour avec succès.');
 }
 public function destroy($id)
