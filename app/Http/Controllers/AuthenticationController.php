@@ -96,7 +96,7 @@ public function login(Request $request)
         $email = $oidc->requestUserInfo('email');
 
         $User = User::where(['email' => $email])->first();
-        if ($User != null && ($User->entite->code == 'SR COF' || $User->entite->code == 'PTP'|| $User->entite->code == 'CIV'|| $User->entite->code == 'HC'
+        if ($User != null && ($User->entite->code == 'SR COF' || $User->entite->code == 'PTP'|| $User->entite->code == 'CIV'|| $User->entite->code == 'HC' || $User->entite->code == 'DSI'
                 || $User->entite->code == 'CM' )){
             $user = User::where(['id' => $User->id])->first();
             if ($user != null){
@@ -107,7 +107,7 @@ public function login(Request $request)
             return redirect()->route('evenements.index');
 
         }else {
-            return redirect()->route('auth.loginSSOForm')->with('error', "Vous n'avez pas accès à cette plateforme");
+            return redirect()->route('auth.sso.initiate')->with('error', "Vous n'avez pas accès à cette plateforme");
         }
 
     }
