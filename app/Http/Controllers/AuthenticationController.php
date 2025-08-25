@@ -52,7 +52,7 @@ public function login(Request $request)
         ->first();
 
     // Vérification des droits d'accès
-    if ($user && $user->entite && in_array($user->entite->code, ['SR COF', 'PTP', 'CIV', 'HC', 'CM'])) {
+    if ($user && $user->entite && in_array($user->entite->code, ['SR COF', 'PTP', 'CIV', 'HC', 'CM','DSI'])) {
         $token = Str::random(20);
 
         // Stockage sécurisé en session
